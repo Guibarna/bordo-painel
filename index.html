@@ -308,6 +308,7 @@ td.v { font-family: var(--f-num); font-size: 15px; font-weight: 600; text-align:
                 <button type="button" data-fuel="0.6" aria-pressed="false">Mistura</button>
                 <button type="button" data-fuel="1" aria-pressed="false">Etanol</button>
               </div>
+              <button class="btn" id="btnGearCal" type="button">Calibrar marchas</button>
             </div>
             <div class="row">
               <span class="label" style="margin-right:4px">Tema</span>
@@ -390,6 +391,7 @@ const PIDS = {
   cat:     { n: "Temp. do catalisador",    u: "°C",   o: "obd", cars: ["polo"], ecu: 0x7E0, svc: 0x01, pid: 0x3C, p: "slow",   f: (d) => u16(d[0], d[1]) / 10 - 40 },
   ethanol: { n: "Etanol no combustível",   u: "%",    o: "obd", cars: ["polo"], ecu: 0x7E0, svc: 0x01, pid: 0x52, p: "slow",   f: (d) => d[0] * 100 / 255 },
   trim:    { n: "Correção total de combustível", u: "%", o: "calc", cars: ["polo"] },
+  mgear:   { n: "Marcha (calculada)",      u: "",     o: "calc", cars: ["polo"] },
   lph:     { n: "Consumo instantâneo",     u: "L/h",  o: "calc" },
   kml:     { n: "Consumo instantâneo",     u: "km/L", o: "calc" },
 };
@@ -411,8 +413,8 @@ const PROFILES = {
     bar: { key: "map", label: "Coletor", unit: "kPa", min: 20, max: 105, ticks: [20, 40, 60, 80, 100], dec: 0, signed: false },
     therms: ["coolant", "iat", "cat"], fuelLabel: "Tanque", hot2: "iat",
     t1: { key: "trim", label: "Correção", unit: "%", dec: 1 },
-    t2: { key: "throttle", label: "Borboleta", unit: "%", dec: 0 },
-    t3: { key: "advance", label: "Avanço", unit: "°", dec: 0 },
+    t2: { key: "mgear", label: "Marcha", unit: "MANUAL", dec: 0 },
+    t3: { key: "throttle", label: "Borboleta", unit: "%", dec: 0 },
     tripBar: "Coletor máximo", tripHot2: "Admissão mais quente",
   },
 };
@@ -423,6 +425,19 @@ let fuelMix = parseFloat(store.get("fuelMix", "0.27")) || 0.27;   // fração de
 const forCar = (p) => !p.cars || p.cars.includes(car);
 const VE = 0.85;          // eficiência volumétrica média do 1.6 8V (calibrar com o consumo por tanque)
 const DISPLACEMENT = 0.001598; // m³
+// Marcha do câmbio manual: rotação ÷ velocidade comparada às relações do câmbio.
+// Relações típicas do câmbio de 5 marchas do Polo 1.6; POLO_K = rpm por km/h para relação 1,0
+// (diferencial ~4,53 e pneu 185/60 R15). Valores aproximados: o botão "Calibrar marchas" corrige.
+const POLO_GEARS = [3.455, 1.944, 1.286, 0.969, 0.8], POLO_K = 40.6;
+let gearScale = parseFloat(store.get("gearScale", "1")) || 1;
+const gearState = { cand: null, n: 0, shown: null };
+function calcGear(rpm, speed) {
+  if (rpm == null || speed == null || speed < 5 || rpm < 600) return null;
+  const k = rpm / speed / (POLO_K * gearScale);
+  let best = null, err = 1;
+  POLO_GEARS.forEach((r, i) => { const e = Math.abs(Math.log(k / r)); if (e < err) { err = e; best = i + 1; } });
+  return err < 0.1 ? best : null;   // fora de 10%: embreagem pisada ou ponto morto
+}
 
 /* ---------- estado ---------- */
 const S = { values: {}, source: "sim", dtcs: [], dtcSim: false };
@@ -439,6 +454,10 @@ function deriveAndTrip(now) {
   } else {
     // Flex aspirado: a mistura fica perto da estequiométrica, então o ar diz quanto combustível entra.
     v.trim = v.stft != null || v.ltft != null ? (v.stft ?? 0) + (v.ltft ?? 0) : null;
+    const g = calcGear(v.rpm, v.speed);           // só troca depois de 3 leituras iguais (sem piscar)
+    if (g === gearState.cand) gearState.n++; else { gearState.cand = g; gearState.n = 1; }
+    if (gearState.n >= 3) gearState.shown = g;
+    v.mgear = gearState.shown;
     let air = v.maf ?? null;                               // g/s
     if (air == null && v.map != null && v.rpm != null) {   // sem MAF: densidade do ar × cilindrada × rotação
       const T = (v.iat ?? 30) + 273.15;
@@ -472,7 +491,7 @@ function startSim() {
     if (car === "polo") {
       const speed = clamp(10 + a * 95 + Math.sin(t / 1.7) * 3, 0, 170);
       const g = speed < 20 ? 1 : speed < 40 ? 2 : speed < 60 ? 3 : speed < 85 ? 4 : 5;
-      const rpm = clamp(850 + speed * [0, 3.45, 1.94, 1.29, 0.97, 0.8][g] * 17 + a * 300, 800, 6200);
+      const rpm = clamp(speed * POLO_GEARS[g - 1] * POLO_K * (1 + Math.sin(t * 3) * 0.01), 850, 6200);
       Object.assign(S.values, {
         rpm, speed, map: 30 + a * 68, baro: 94, throttle: 8 + a * 80, load: 18 + a * 72,
         coolant: Math.min(92, 50 + t * 1.6), iat: 34 + a * 6, cat: Math.min(720, 380 + t * 8 + a * 120),
@@ -834,7 +853,7 @@ function render() {
   $("consAvg").textContent = trip.fuel > 0.02 ? fmt(trip.km / trip.fuel, 1) : "—";
   pendingTag($("consCard"), v.lph == null);
   const g2 = v[PROF.t2.key], g3 = v[PROF.t3.key];
-  $("gear").textContent = g2 == null ? "—" : PROF.t2.key === "gear" ? g2 : fmt(smooth("t2", g2), PROF.t2.dec);
+  $("gear").textContent = g2 == null ? "—" : ["gear", "mgear"].includes(PROF.t2.key) ? g2 : fmt(smooth("t2", g2), PROF.t2.dec);
   pendingTag($("gearCard"), g2 == null && PIDS[PROF.t2.key].o === "fab");
   $("trac").textContent = g3 == null ? "—" : typeof g3 === "number" ? fmt(smooth("t3", g3), PROF.t3.dec) + PROF.t3.unit : g3;
   pendingTag($("tracCard"), g3 == null && PIDS[PROF.t3.key].o === "fab");
@@ -967,6 +986,17 @@ document.querySelectorAll("#carSeg button").forEach((b) => b.addEventListener("c
   if (wasBle) { setConn("bad", "Desconectado"); $("connStatus").textContent = "Carro trocado. Toque em Conectar de novo."; }
   else startSim();
 }));
+$("btnGearCal").addEventListener("click", () => {
+  const v = S.values;
+  if (!(v.speed > 40 && v.rpm > 1000)) {
+    $("connStatus").textContent = "Para calibrar: ande em 5ª marcha, acima de 40 km/h e com velocidade estável, e toque de novo.";
+    return;
+  }
+  gearScale = v.rpm / v.speed / (POLO_K * POLO_GEARS[4]);
+  store.set("gearScale", String(gearScale));
+  $("connStatus").textContent = `Marchas calibradas (fator ${fmt(gearScale, 3)}).`;
+  log(`Marchas calibradas em 5ª: ${Math.round(v.rpm)} rpm a ${Math.round(v.speed)} km/h, fator ${fmt(gearScale, 3)}.`);
+});
 document.querySelectorAll("#fuelSeg button").forEach((b) => b.addEventListener("click", () => {
   fuelMix = parseFloat(b.dataset.fuel); store.set("fuelMix", String(fuelMix)); applyProfile();
   log(`Combustível no tanque: ${b.textContent}.`);
