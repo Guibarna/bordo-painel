@@ -162,6 +162,12 @@ td.v { font-family: var(--f-num); font-size: 15px; font-weight: 600; text-align:
 .dtc .code { font-family: var(--f-num); font-size: 22px; font-weight: 700; color: var(--warn); }
 .conn { grid-template-columns: 1fr 1fr; }
 .conn .card { padding: 14px; display: flex; flex-direction: column; gap: 10px; min-height: 0; overflow: auto; }
+.settings { display: grid; grid-template-columns: 78px 1fr; gap: 12px 10px; align-items: center; }
+.settings-sub { display: contents; }
+.settings .seg { justify-self: start; }
+.settings-sub[hidden] { display: none !important; }
+.hint { font-size: 11.5px; color: var(--muted); }
+.btn.small { height: 30px; padding: 0 10px; font-size: 12px; }
 .chip.theme { cursor: pointer; color: var(--fg); }
 .chip.theme svg { width: 14px; height: 14px; }
 .conn h2 { margin: 0; font-family: var(--f-num); font-size: 20px; font-weight: 700; }
@@ -290,43 +296,46 @@ td.v { font-family: var(--f-num); font-size: 15px; font-weight: 600; text-align:
       <main class="view" id="v-conexao" hidden>
         <div class="page conn">
           <div class="card">
-            <h2>Adaptador</h2>
-            <div class="status-line" id="connStatus">Simulação ligada. Os números da tela são inventados.</div>
-            <div class="row">
-              <button class="btn primary" id="btnBle" type="button">Conectar ao iCar Pro 2S</button>
-              <button class="btn" id="btnSim" type="button">Usar simulação</button>
-              <button class="btn" id="btnStop" type="button">Desconectar</button>
-            </div>
-            <p id="bleHelp">Para conectar no carro: Galaxy A8 com o Chrome, Bluetooth <b>e localização</b> ligados (o Android 9 exige a localização para achar aparelhos Bluetooth), ignição ligada e o adaptador plugado. Na lista que aparecer, escolha o que tiver “Vlink”, “iCar” ou “OBD” no nome.</p>
-            <div class="row">
-              <span class="label" style="margin-right:4px">Carro</span>
+            <h2>Ajustes</h2>
+            <div class="settings">
+              <span class="label">Carro</span>
               <div class="seg" role="group" aria-label="Carro" id="carSeg">
                 <button type="button" data-car="pajero" aria-pressed="true">Pajero 3.2 DI-D</button>
                 <button type="button" data-car="polo" aria-pressed="false">Polo 1.6 flex</button>
               </div>
-            </div>
-            <div class="row" id="fuelRow" hidden>
-              <span class="label" style="margin-right:4px">No tanque</span>
-              <div class="seg" role="group" aria-label="Combustível no tanque" id="fuelSeg">
-                <button type="button" data-fuel="0.27" aria-pressed="true">Gasolina</button>
-                <button type="button" data-fuel="0.6" aria-pressed="false">Mistura</button>
-                <button type="button" data-fuel="1" aria-pressed="false">Etanol</button>
+              <div class="settings-sub" id="fuelRow" hidden>
+                <span class="label">No tanque</span>
+                <div class="seg" role="group" aria-label="Combustível no tanque" id="fuelSeg">
+                  <button type="button" data-fuel="0.27" aria-pressed="true">Gasolina</button>
+                  <button type="button" data-fuel="0.6" aria-pressed="false">Mistura</button>
+                  <button type="button" data-fuel="1" aria-pressed="false">Etanol</button>
+                </div>
+                <span class="label">Marchas</span>
+                <div class="row"><button class="btn" id="btnGearCal" type="button">Calibrar marchas</button><span class="hint">em 5ª, acima de 40 km/h</span></div>
               </div>
-              <button class="btn" id="btnGearCal" type="button">Calibrar marchas</button>
-            </div>
-            <div class="row">
-              <span class="label" style="margin-right:4px">Tema</span>
-              <div class="seg" role="group" aria-label="Tema" id="themeSeg">
-                <button type="button" data-mode="auto" aria-pressed="true">Auto</button>
-                <button type="button" data-mode="day" aria-pressed="false">Dia</button>
-                <button type="button" data-mode="night" aria-pressed="false">Noite</button>
+              <span class="label">Tema</span>
+              <div class="row">
+                <div class="seg" role="group" aria-label="Tema" id="themeSeg">
+                  <button type="button" data-mode="auto" aria-pressed="true">Auto</button>
+                  <button type="button" data-mode="day" aria-pressed="false">Dia</button>
+                  <button type="button" data-mode="night" aria-pressed="false">Noite</button>
+                </div>
+                <span class="hint">Auto: noite das 18h às 6h</span>
               </div>
-              <button class="btn" id="btnWake" type="button">Manter tela ligada</button>
+              <span class="label">Tela</span>
+              <div><button class="btn" id="btnWake" type="button">Manter tela ligada</button></div>
             </div>
-            <p>Auto: noite das 18h às 6h, dia no resto do tempo.</p>
           </div>
           <div class="card">
-            <div class="row" style="justify-content:space-between"><h2>Registro</h2><button class="btn" id="btnCopy" type="button">Copiar registro</button></div>
+            <h2>Adaptador</h2>
+            <div class="status-line" id="connStatus">Simulação ligada. Os números da tela são inventados.</div>
+            <button class="btn primary" id="btnBle" type="button">Conectar ao iCar Pro 2S</button>
+            <div class="row">
+              <button class="btn" id="btnSim" type="button">Usar simulação</button>
+              <button class="btn" id="btnStop" type="button">Desconectar</button>
+            </div>
+            <p id="bleHelp">Bluetooth <b>e localização</b> ligados no celular, motor ligado. Na lista, escolha o aparelho com “Vlink”, “iCar” ou “OBD” no nome.</p>
+            <div class="row" style="justify-content:space-between"><span class="label">Registro</span><button class="btn small" id="btnCopy" type="button">Copiar registro</button></div>
             <div class="log" id="log" tabindex="0"></div>
           </div>
         </div>
@@ -975,7 +984,7 @@ addEventListener("resize", fit);
 new ResizeObserver(fit).observe($("fit"));
 
 /* ---------- início ---------- */
-if (!navigator.bluetooth) $("bleHelp").insertAdjacentHTML("afterbegin", "<b>Este navegador não tem Bluetooth para páginas</b> (iPhone e esta pré-visualização). ");
+if (!navigator.bluetooth) $("bleHelp").insertAdjacentHTML("afterbegin", "<b>Sem Bluetooth neste navegador</b> (iPhone e prévia). ");
 function applyProfile() {
   PROF = PROFILES[car];
   $("carName").innerHTML = PROF.name;
