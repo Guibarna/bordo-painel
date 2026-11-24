@@ -186,7 +186,7 @@ td.v { font-family: var(--f-num); font-size: 15px; font-weight: 600; text-align:
     <div class="stage" id="stage">
       <header class="top">
         <span class="brand">Bordo</span>
-        <span class="car"><b>Pajero 3.2 DI-D</b> · 4M41</span>
+        <span class="car" id="carName"><b>Pajero 3.2 DI-D</b> · 4M41</span>
         <span class="spacer"></span>
         <span class="chip sim" id="chipConn"><span class="dot"></span><span id="connText">Simulação</span></span>
         <button class="chip" id="chipDtc" type="button" title="Ver códigos de falha"><span id="dtcText">Sem falhas</span></button>
@@ -220,7 +220,7 @@ td.v { font-family: var(--f-num); font-size: 15px; font-weight: 600; text-align:
           </section>
 
           <section class="card g-turbo" aria-label="Turbo">
-            <div><div class="label">Turbo</div><div class="turbo-val" id="boost">+0,0<small>bar</small></div></div>
+            <div><div class="label" id="boostLabel">Turbo</div><div class="turbo-val" id="boost">+0,0<small>bar</small></div></div>
             <div class="hbar" id="hbar">
               <div class="track"></div><div class="fill" id="boostFill"></div><div class="zero" id="boostZero"></div><div class="max" id="boostMax"></div>
             </div>
@@ -234,15 +234,15 @@ td.v { font-family: var(--f-num); font-size: 15px; font-weight: 600; text-align:
 
           <section class="g-bottom">
             <div class="card fuel" aria-label="Combustível">
-              <div class="col"><div class="label">Diesel</div><div><div class="num" id="fuel">--</div><div class="sub">%</div></div></div>
+              <div class="col"><div class="label" id="fuelLabel">Diesel</div><div><div class="num" id="fuel">--</div><div class="sub">%</div></div></div>
               <div class="tube"><div class="lvl" id="fuelLvl"></div></div>
             </div>
-            <div class="card tile"><div class="label">Rail</div><div class="big" id="rail">--</div><div class="sub">MPa</div></div>
+            <div class="card tile"><div class="label" id="railLabel">Rail</div><div class="big" id="rail">--</div><div class="sub" id="railUnit">MPa</div></div>
             <div class="card tile cons" id="consCard"><div class="label">Consumo</div><div class="big" id="cons">—</div><div class="avg">média <b id="consAvg">—</b> km/L</div></div>
-            <div class="card tile center" id="gearCard"><div class="label">Marcha</div><div class="big gear" id="gear">—</div><div class="sub" id="gearSub">AUTO</div></div>
-            <div class="card tile" id="tracCard"><div class="label">Tração</div>
+            <div class="card tile center" id="gearCard"><div class="label" id="gearLabel">Marcha</div><div class="big gear" id="gear">—</div><div class="sub" id="gearSub">AUTO</div></div>
+            <div class="card tile" id="tracCard"><div class="label" id="tracLabel">Tração</div>
               <div class="trac">
-                <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><rect x="6" y="6" width="8" height="12" rx="2"/><rect x="34" y="6" width="8" height="12" rx="2"/><rect x="6" y="30" width="8" height="12" rx="2"/><rect x="34" y="30" width="8" height="12" rx="2"/><path d="M14 12h20M14 36h20M24 12v24"/><rect x="20" y="20" width="8" height="8" rx="1.5"/></svg>
+                <svg id="tracIcon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><rect x="6" y="6" width="8" height="12" rx="2"/><rect x="34" y="6" width="8" height="12" rx="2"/><rect x="6" y="30" width="8" height="12" rx="2"/><rect x="34" y="30" width="8" height="12" rx="2"/><path d="M14 12h20M14 36h20M24 12v24"/><rect x="20" y="20" width="8" height="8" rx="1.5"/></svg>
                 <div class="big" id="trac">—</div>
               </div>
             </div>
@@ -260,9 +260,9 @@ td.v { font-family: var(--f-num); font-size: 15px; font-weight: 600; text-align:
           <div class="card tile"><div class="label">Tempo</div><div class="big" id="tTime">0:00</div><div class="sub">h:min</div></div>
           <div class="card tile"><div class="label">Velocidade média</div><div class="big" id="tAvg">0</div><div class="sub">km/h</div></div>
           <div class="card tile"><div class="label">Velocidade máxima</div><div class="big" id="tMax">0</div><div class="sub">km/h</div></div>
-          <div class="card tile"><div class="label">Turbo máximo</div><div class="big" id="tBoost">0,0</div><div class="sub">bar</div></div>
+          <div class="card tile"><div class="label" id="tBoostLabel">Turbo máximo</div><div class="big" id="tBoost">0,0</div><div class="sub" id="tBoostUnit">bar</div></div>
           <div class="card tile"><div class="label">Motor mais quente</div><div class="big" id="tCool">--</div><div class="sub">°C</div></div>
-          <div class="card tile"><div class="label">Caixa mais quente</div><div class="big" id="tAtf">--</div><div class="sub">°C</div></div>
+          <div class="card tile"><div class="label" id="tAtfLabel">Caixa mais quente</div><div class="big" id="tAtf">--</div><div class="sub">°C</div></div>
           <div class="card tile"><div class="label">Consumo médio</div><div class="big" id="tKml">—</div><div class="sub" id="tKmlSub">km/L · precisa do débito de injeção</div></div>
           <div class="card note"><span>A viagem começa quando o painel conecta e é zerada quando você toca em Zerar viagem.</span><button class="btn" id="tripReset" type="button">Zerar viagem</button></div>
         </div>
@@ -295,8 +295,23 @@ td.v { font-family: var(--f-num); font-size: 15px; font-weight: 600; text-align:
             </div>
             <p id="bleHelp">Para conectar no carro: Galaxy A8 com o Chrome, Bluetooth <b>e localização</b> ligados (o Android 9 exige a localização para achar aparelhos Bluetooth), ignição ligada e o adaptador plugado. Na lista que aparecer, escolha o que tiver “Vlink”, “iCar” ou “OBD” no nome.</p>
             <div class="row">
+              <span class="label" style="margin-right:4px">Carro</span>
+              <div class="seg" role="group" aria-label="Carro" id="carSeg">
+                <button type="button" data-car="pajero" aria-pressed="true">Pajero 3.2 DI-D</button>
+                <button type="button" data-car="polo" aria-pressed="false">Polo 1.6 flex</button>
+              </div>
+            </div>
+            <div class="row" id="fuelRow" hidden>
+              <span class="label" style="margin-right:4px">No tanque</span>
+              <div class="seg" role="group" aria-label="Combustível no tanque" id="fuelSeg">
+                <button type="button" data-fuel="0.27" aria-pressed="true">Gasolina</button>
+                <button type="button" data-fuel="0.6" aria-pressed="false">Mistura</button>
+                <button type="button" data-fuel="1" aria-pressed="false">Etanol</button>
+              </div>
+            </div>
+            <div class="row">
               <span class="label" style="margin-right:4px">Tema</span>
-              <div class="seg" role="group" aria-label="Tema">
+              <div class="seg" role="group" aria-label="Tema" id="themeSeg">
                 <button type="button" data-mode="auto" aria-pressed="true">Auto</button>
                 <button type="button" data-mode="day" aria-pressed="false">Dia</button>
                 <button type="button" data-mode="night" aria-pressed="false">Noite</button>
@@ -350,27 +365,64 @@ const PIDS = {
   rpm:     { n: "Rotação",                 u: "rpm",  o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x0C, p: "fast",   f: (d) => u16(d[0], d[1]) / 4 },
   speed:   { n: "Velocidade",              u: "km/h", o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x0D, p: "fast",   f: (d) => d[0] },
   map:     { n: "Pressão no coletor",      u: "kPa",  o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x0B, p: "fast",   f: (d) => d[0] },
-  rail:    { n: "Pressão do common rail",  u: "MPa",  o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x23, p: "fast",   f: (d) => u16(d[0], d[1]) * 10 / 1000 },
+  rail:    { n: "Pressão do common rail",  u: "MPa",  o: "obd", cars: ["pajero"], ecu: 0x7E0, svc: 0x01, pid: 0x23, p: "fast",   f: (d) => u16(d[0], d[1]) * 10 / 1000 },
   pedal:   { n: "Pedal do acelerador",     u: "%",    o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x49, p: "fast",   f: (d) => d[0] * 100 / 255 },
   load:    { n: "Carga do motor",          u: "%",    o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x04, p: "fast",   f: (d) => d[0] * 100 / 255 },
   maf:     { n: "Fluxo de ar (MAF)",       u: "g/s",  o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x10, p: "medium", f: (d) => u16(d[0], d[1]) / 100 },
   coolant: { n: "Temp. do motor",          u: "°C",   o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x05, p: "medium", f: (d) => d[0] - 40 },
   iat:     { n: "Temp. de admissão",       u: "°C",   o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x0F, p: "medium", f: (d) => d[0] - 40 },
-  egr:     { n: "EGR comandada",           u: "%",    o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x2C, p: "medium", f: (d) => d[0] * 100 / 255 },
+  egr:     { n: "EGR comandada",           u: "%",    o: "obd", cars: ["pajero"], ecu: 0x7E0, svc: 0x01, pid: 0x2C, p: "medium", f: (d) => d[0] * 100 / 255 },
   ambient: { n: "Temp. externa",           u: "°C",   o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x46, p: "slow",   f: (d) => d[0] - 40 },
   baro:    { n: "Pressão atmosférica",     u: "kPa",  o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x33, p: "slow",   f: (d) => d[0] },
   volts:   { n: "Tensão no módulo",        u: "V",    o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x42, p: "slow",   f: (d) => u16(d[0], d[1]) / 1000 },
   fuel:    { n: "Nível de combustível",    u: "%",    o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x2F, p: "slow",   f: (d) => d[0] * 100 / 255 },
   fuelrate:{ n: "Consumo informado pela ECU", u: "L/h", o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x5E, p: "medium", f: (d) => u16(d[0], d[1]) / 20 },
-  inj:     { n: "Débito de injeção",       u: "mm³",  o: "fab" },
-  atf:     { n: "Temp. da caixa (ATF)",    u: "°C",   o: "fab" },
-  gear:    { n: "Marcha",                  u: "",     o: "fab" },
-  trac:    { n: "Modo da tração",          u: "",     o: "fab" },
-  boost:   { n: "Turbo",                   u: "bar",  o: "calc" },
+  inj:     { n: "Débito de injeção",       u: "mm³",  o: "fab", cars: ["pajero"] },
+  atf:     { n: "Temp. da caixa (ATF)",    u: "°C",   o: "fab", cars: ["pajero"] },
+  gear:    { n: "Marcha",                  u: "",     o: "fab", cars: ["pajero"] },
+  trac:    { n: "Modo da tração",          u: "",     o: "fab", cars: ["pajero"] },
+  boost:   { n: "Turbo",                   u: "bar",  o: "calc", cars: ["pajero"] },
+  // Polo 1.6 flex (motor a gasolina/etanol aspirado)
+  throttle:{ n: "Borboleta",               u: "%",    o: "obd", cars: ["polo"], ecu: 0x7E0, svc: 0x01, pid: 0x11, p: "fast",   f: (d) => d[0] * 100 / 255 },
+  advance: { n: "Avanço de ignição",       u: "°",    o: "obd", cars: ["polo"], ecu: 0x7E0, svc: 0x01, pid: 0x0E, p: "fast",   f: (d) => d[0] / 2 - 64 },
+  stft:    { n: "Correção curta (banco 1)", u: "%",   o: "obd", cars: ["polo"], ecu: 0x7E0, svc: 0x01, pid: 0x06, p: "medium", f: (d) => d[0] * 100 / 128 - 100 },
+  ltft:    { n: "Correção longa (banco 1)", u: "%",   o: "obd", cars: ["polo"], ecu: 0x7E0, svc: 0x01, pid: 0x07, p: "slow",   f: (d) => d[0] * 100 / 128 - 100 },
+  cat:     { n: "Temp. do catalisador",    u: "°C",   o: "obd", cars: ["polo"], ecu: 0x7E0, svc: 0x01, pid: 0x3C, p: "slow",   f: (d) => u16(d[0], d[1]) / 10 - 40 },
+  ethanol: { n: "Etanol no combustível",   u: "%",    o: "obd", cars: ["polo"], ecu: 0x7E0, svc: 0x01, pid: 0x52, p: "slow",   f: (d) => d[0] * 100 / 255 },
+  trim:    { n: "Correção total de combustível", u: "%", o: "calc", cars: ["polo"] },
   lph:     { n: "Consumo instantâneo",     u: "L/h",  o: "calc" },
   kml:     { n: "Consumo instantâneo",     u: "km/L", o: "calc" },
 };
 const EVERY = { fast: 1, medium: 4, slow: 20 };
+
+/* ---------- perfis de carro ---------- */
+const PROFILES = {
+  pajero: {
+    name: "<b>Pajero 3.2 DI-D</b> · 4M41", protocol: "ATSP6", gauge: { max: 4500, red: 4000 },
+    bar: { key: "boost", label: "Turbo", unit: "bar", min: -0.5, max: 1.5, ticks: [-0.5, 0, 0.5, 1, 1.5], dec: 1, signed: true },
+    therms: ["coolant", "atf", "iat"], fuelLabel: "Diesel", hot2: "atf",
+    t1: { key: "rail", label: "Rail", unit: "MPa", dec: 0 },
+    t2: { key: "gear", label: "Marcha", unit: "AUTO", dec: 0 },
+    t3: { key: "trac", label: "Tração", icon: true },
+    tripBar: "Turbo máximo", tripHot2: "Caixa mais quente",
+  },
+  polo: {
+    name: "<b>Polo Sedan 1.6</b> · flex", protocol: "ATSP0", gauge: { max: 7000, red: 6250 },
+    bar: { key: "map", label: "Coletor", unit: "kPa", min: 20, max: 105, ticks: [20, 40, 60, 80, 100], dec: 0, signed: false },
+    therms: ["coolant", "iat", "cat"], fuelLabel: "Tanque", hot2: "iat",
+    t1: { key: "trim", label: "Correção", unit: "%", dec: 1 },
+    t2: { key: "throttle", label: "Borboleta", unit: "%", dec: 0 },
+    t3: { key: "advance", label: "Avanço", unit: "°", dec: 0 },
+    tripBar: "Coletor máximo", tripHot2: "Admissão mais quente",
+  },
+};
+let car = store.get("car", "pajero");
+if (!PROFILES[car]) car = "pajero";
+let PROF = PROFILES[car];
+let fuelMix = parseFloat(store.get("fuelMix", "0.27")) || 0.27;   // fração de etanol no tanque
+const forCar = (p) => !p.cars || p.cars.includes(car);
+const VE = 0.85;          // eficiência volumétrica média do 1.6 8V (calibrar com o consumo por tanque)
+const DISPLACEMENT = 0.001598; // m³
 
 /* ---------- estado ---------- */
 const S = { values: {}, source: "sim", dtcs: [], dtcSim: false };
@@ -379,10 +431,23 @@ function resetTrip() { Object.assign(trip, { km: 0, secs: 0, fuel: 0, max: 0, bo
 
 function deriveAndTrip(now) {
   const v = S.values;
-  if (v.map != null) v.boost = (v.map - (v.baro ?? 101.3)) / 100;
-  // Consumo: da ECU (PID 5E) ou do débito de injeção (mm³ por injeção × 2 injeções por volta no 4 cilindros).
-  // Pelo fluxo de ar (MAF) não calculamos: no diesel a mistura varia demais e o número sairia errado.
-  v.lph = v.fuelrate ?? (v.inj != null && v.rpm != null ? v.inj * v.rpm * 2 * 60 / 1e6 : null);
+  if (car === "pajero") {
+    if (v.map != null) v.boost = (v.map - (v.baro ?? 101.3)) / 100;
+    // Consumo: da ECU (PID 5E) ou do débito de injeção (mm³ por injeção × 2 injeções por volta no 4 cilindros).
+    // Pelo fluxo de ar (MAF) não calculamos: no diesel a mistura varia demais e o número sairia errado.
+    v.lph = v.fuelrate ?? (v.inj != null && v.rpm != null ? v.inj * v.rpm * 2 * 60 / 1e6 : null);
+  } else {
+    // Flex aspirado: a mistura fica perto da estequiométrica, então o ar diz quanto combustível entra.
+    v.trim = v.stft != null || v.ltft != null ? (v.stft ?? 0) + (v.ltft ?? 0) : null;
+    let air = v.maf ?? null;                               // g/s
+    if (air == null && v.map != null && v.rpm != null) {   // sem MAF: densidade do ar × cilindrada × rotação
+      const T = (v.iat ?? 30) + 273.15;
+      air = (v.map * 1000 * DISPLACEMENT * (v.rpm / 120) * VE) / (287.05 * T) * 1000;
+    }
+    const e = v.ethanol != null ? v.ethanol / 100 : fuelMix;
+    const afr = 14.7 - 6.0 * e, dens = 0.745 + 0.064 * e;  // ar/combustível e kg/L da mistura
+    v.lph = v.fuelrate ?? (air != null && (v.rpm ?? 0) > 300 ? (air / afr) * (1 + (v.trim ?? 0) / 100) * 3600 / (dens * 1000) : null);
+  }
   v.kml = v.lph != null && (v.speed || 0) > 3 && v.lph > 0.05 ? v.speed / v.lph : null;
   if (trip.last != null) {
     const dt = (now - trip.last) / 1000;
@@ -390,9 +455,9 @@ function deriveAndTrip(now) {
   }
   trip.last = now;
   trip.max = Math.max(trip.max, v.speed || 0);
-  trip.boost = Math.max(trip.boost, v.boost || 0);
+  if (v[PROF.bar.key] != null) trip.boost = Math.max(trip.boost, v[PROF.bar.key]);
   if (v.coolant != null) trip.cool = Math.max(trip.cool ?? -99, v.coolant);
-  if (v.atf != null) trip.atf = Math.max(trip.atf ?? -99, v.atf);
+  if (v[PROF.hot2] != null) trip.atf = Math.max(trip.atf ?? -99, v[PROF.hot2]);
 }
 
 /* ---------- simulação ---------- */
@@ -400,10 +465,22 @@ let simTimer = null, simT0 = 0;
 function startSim() {
   stopAll();
   S.source = "sim"; S.values = {}; resetTrip(); simT0 = performance.now();
-  S.dtcs = ["P0401"]; S.dtcSim = true;
+  S.dtcs = car === "pajero" ? ["P0401"] : []; S.dtcSim = car === "pajero";
   simTimer = setInterval(() => {
     const t = (performance.now() - simT0) / 1000;
     const a = (Math.sin(t / 5) + 1) / 2;                    // acelerador 0..1
+    if (car === "polo") {
+      const speed = clamp(10 + a * 95 + Math.sin(t / 1.7) * 3, 0, 170);
+      const g = speed < 20 ? 1 : speed < 40 ? 2 : speed < 60 ? 3 : speed < 85 ? 4 : 5;
+      const rpm = clamp(850 + speed * [0, 3.45, 1.94, 1.29, 0.97, 0.8][g] * 17 + a * 300, 800, 6200);
+      Object.assign(S.values, {
+        rpm, speed, map: 30 + a * 68, baro: 94, throttle: 8 + a * 80, load: 18 + a * 72,
+        coolant: Math.min(92, 50 + t * 1.6), iat: 34 + a * 6, cat: Math.min(720, 380 + t * 8 + a * 120),
+        stft: Math.sin(t / 2.3) * 3, ltft: 2.3, advance: 12 + (1 - a) * 18, volts: 14.2, fuel: 48, ambient: 24,
+      });
+      deriveAndTrip(performance.now());
+      return;
+    }
     const speed = clamp(18 + a * 92 + Math.sin(t / 1.7) * 3, 0, 160);
     const gearN = speed < 15 ? 1 : speed < 30 ? 2 : speed < 50 ? 3 : speed < 75 ? 4 : 5;
     const ratio = [0, 3.79, 2.06, 1.42, 1.0, 0.73][gearN];
@@ -474,15 +551,25 @@ class Elm {
 
   async init() {
     this.version = await this.cmd("ATZ", 3000);
-    for (const c of ["ATE0", "ATL0", "ATS1", "ATH1", "ATAT1", "ATCAF1", "ATSP6"]) await this.cmd(c);
+    for (const c of ["ATE0", "ATL0", "ATS1", "ATH1", "ATAT1", "ATCAF1", PROF.protocol]) await this.cmd(c);
     log(`Adaptador: ${this.version.replace(/\s+/g, " ") || "(sem resposta ao ATZ)"}`);
+    if (PROF.protocol === "ATSP0") {
+      log("Procurando o protocolo do carro (até 10 s)…");
+      await this.cmd("0100", 10000);
+      const dp = (await this.cmd("ATDPN")).toUpperCase().replace(/[^0-9A-C]/g, "");
+      const proto = dp.slice(-1);
+      const names = { 1: "J1850 PWM", 2: "J1850 VPW", 3: "ISO 9141-2 (K-line)", 4: "KWP2000 5 baud (K-line)", 5: "KWP2000 rápido (K-line)", 6: "CAN 11 bits 500k", 7: "CAN 29 bits 500k", 8: "CAN 11 bits 250k", 9: "CAN 29 bits 250k" };
+      log(`Protocolo detectado: ${names[proto] || dp || "nenhum"}`);
+      if (["3", "4", "5"].includes(proto)) { this.kline = true; await this.cmd("ATH0"); }
+      if (["7", "9"].includes(proto)) log("Atenção: CAN de 29 bits ainda não é suportado pelo painel. Me mande este registro.");
+    }
   }
 
   async volts() { const m = (await this.cmd("ATRV")).match(/(\d+(\.\d+)?)/); return m ? parseFloat(m[1]) : null; }
 
   async request(tx, bytes) {
     if (!READ_ONLY.has(bytes[0])) throw new Error(`serviço 0x${bytes[0].toString(16)} bloqueado (só leitura)`);
-    if (tx !== this.header) {
+    if (!this.kline && tx !== this.header) {
       await this.cmd("ATSH" + tx.toString(16).toUpperCase());
       await this.cmd(tx === 0x7DF ? "ATCRA" : "ATCRA" + (tx + 8).toString(16).toUpperCase());
       this.header = tx;
@@ -491,7 +578,7 @@ class Elm {
     if (wait > 0) await new Promise((r) => setTimeout(r, wait));
     this.lastReq = performance.now();
     const text = await this.cmd(bytes.map((b) => b.toString(16).padStart(2, "0")).join("").toUpperCase());
-    const resp = parseFrames(text);
+    const resp = this.kline ? parseLines(text) : parseFrames(text);
     for (const r of resp) if (r.data[0] === 0x7F) throw new Error(`ECU recusou (0x${(r.data[2] ?? 0).toString(16)})`);
     return resp;
   }
@@ -516,6 +603,17 @@ function parseFrames(text) {
     }
   }
   return done;
+}
+
+// K-line (protocolos antigos) com cabeçalhos desligados: cada linha é uma resposta inteira.
+function parseLines(text) {
+  const out = [];
+  for (const line of text.split(/[\r\n]+/)) {
+    const tok = line.trim().split(/\s+/);
+    if (!tok.length || !tok.every((x) => /^[0-9A-F]{2}$/i.test(x))) continue;
+    out.push({ rx: 0, data: tok.map((x) => parseInt(x, 16)) });
+  }
+  return out;
 }
 
 function decodeDtc(hi, lo) {
@@ -577,7 +675,7 @@ async function readDtcs() {
 async function pollLoop() {
   polling = true;
   const sup = await supportedPids(0x7E0);
-  const active = Object.entries(PIDS).filter(([, p]) => p.svc && (!sup.size || p.svc !== 0x01 || sup.has(p.pid)));
+  const active = Object.entries(PIDS).filter(([, p]) => p.svc && forCar(p) && (!sup.size || p.svc !== 0x01 || sup.has(p.pid)));
   log(`PIDs suportados pela ECU do motor: ${[...sup].filter((x) => x % 32).map((x) => x.toString(16).padStart(2, "0").toUpperCase()).join(" ") || "nenhum informado"}`);
   log(`Lendo: ${active.map(([k]) => k).join(", ")}`);
   let cycle = 0, silent = 0, lastDtc = 0;
@@ -625,8 +723,10 @@ function setConn(kind, text) {
 /* ---------- tela: velocímetro ---------- */
 const G = { cx: 209, cy: 178, r: 150, a0: 205, a1: -25, n: 46, max: 4500, red: 4000 };
 const segs = [];
-(function buildGauge() {
+function buildGauge() {
   const svg = $("gauge"), ns = "http://www.w3.org/2000/svg";
+  svg.innerHTML = ""; segs.length = 0;
+  G.max = PROF.gauge.max; G.red = PROF.gauge.red;
   const pt = (a, r) => [G.cx + r * Math.cos(a * Math.PI / 180), G.cy - r * Math.sin(a * Math.PI / 180)];
   for (let i = 0; i < G.n; i++) {
     const a = G.a0 - i * (G.a0 - G.a1) / (G.n - 1);
@@ -637,7 +737,7 @@ const segs = [];
     svg.appendChild(l);
     segs.push({ el: l, rpm: (i / (G.n - 1)) * G.max });
   }
-  for (let k = 0; k <= 4; k++) {
+  for (let k = 0; k <= Math.floor(G.max / 1000); k++) {
     const a = G.a0 - (k * 1000 / G.max) * (G.a0 - G.a1);
     const [x, y] = pt(a, G.r - 34);
     const t = document.createElementNS(ns, "text");
@@ -648,15 +748,17 @@ const segs = [];
   const mk = (attrs, txt) => { const t = document.createElementNS(ns, "text"); Object.entries(attrs).forEach(([k, v]) => t.setAttribute(k, v)); t.textContent = txt; svg.appendChild(t); return t; };
   G.speed = mk({ x: G.cx, y: G.cy + 2, "text-anchor": "middle", "font-size": 104, "font-weight": 700, fill: "var(--fg)", "font-family": "Saira Semi Condensed, Arial Narrow, sans-serif" }, "0");
   mk({ x: G.cx + 92, y: G.cy - 4, "font-size": 14, fill: "var(--muted)", "font-family": "Inter, sans-serif" }, "km/h");
-})();
+}
 
 /* ---------- tela: termômetros ---------- */
 const THERMS = {
   coolant: { title: "Motor", min: 40, max: 120, hot: 105, color: "var(--cold)", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3v11"/><circle cx="12" cy="17" r="3"/><path d="M15 6h3M15 9h2M3 21c2-1.3 4-1.3 6 0s4 1.3 6 0 4-1.3 6 0"/></svg>' },
   atf:     { title: "Caixa",  min: 40, max: 120, hot: 110, color: "#9B7BEA", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>' },
+  cat:     { title: "Catalisador", min: 100, max: 900, hot: 800, color: "#E0884A", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="6" y="7" width="12" height="10" rx="2"/><path d="M2 12h4M18 12h4M9 10v4M12 10v4M15 10v4"/></svg>' },
   iat:     { title: "Admissão", min: 0, max: 80, hot: 65, color: "var(--ok)", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 8h11a3 3 0 1 0-3-3M3 12h15a3 3 0 1 1-3 3M3 16h8"/></svg>' },
 };
-document.querySelectorAll("[data-therm]").forEach((el) => {
+function buildTherms() { document.querySelectorAll(".g-temps .therm").forEach((el, i) => {
+  el.dataset.therm = PROF.therms[i];
   const k = el.dataset.therm, c = THERMS[k];
   const steps = 5, ticks = Array.from({ length: steps }, (_, i) => c.min + (i * (c.max - c.min)) / (steps - 1));
   el.innerHTML = `
@@ -667,16 +769,20 @@ document.querySelectorAll("[data-therm]").forEach((el) => {
     </div>
     <div class="read"><div class="num">--</div><div class="unit">°C</div><div class="label">${c.title}</div></div>`;
   c.lvl = el.querySelector(".lvl"); c.mark = el.querySelector(".mark"); c.num = el.querySelector(".read .num"); c.el = el;
-});
+}); }
 
 /* ---------- tela: turbo ---------- */
 const B = { min: -0.5, max: 1.5 };
-(function buildTurbo() {
-  const bar = $("hbar"), pos = (v) => ((v - B.min) / (B.max - B.min)) * 100;
-  [-0.5, 0, 0.5, 1, 1.5].forEach((v) => { const s = document.createElement("span"); s.className = "tick"; s.style.left = pos(v) + "%"; s.textContent = fmt(v, 1); bar.appendChild(s); });
+function buildBar() {
+  const bar = $("hbar"), bk = PROF.bar;
+  B.min = bk.min; B.max = bk.max;
+  const pos = (v) => ((v - B.min) / (B.max - B.min)) * 100;
+  bar.querySelectorAll(".tick").forEach((e) => e.remove());
+  bk.ticks.forEach((v) => { const s = document.createElement("span"); s.className = "tick"; s.style.left = pos(v) + "%"; s.textContent = fmt(v, bk.dec); bar.appendChild(s); });
+  $("boostZero").hidden = !(B.min < 0 && B.max > 0);
   $("boostZero").style.left = pos(0) + "%";
   B.pos = pos;
-})();
+}
 
 /* ---------- desenho a cada quadro ---------- */
 const shown = {};   // valores suavizados para os ponteiros não "pularem"
@@ -701,17 +807,17 @@ function render() {
     s.el.setAttribute("stroke", on ? (s.rpm >= G.red ? "var(--hot)" : "var(--fg)") : (s.rpm >= G.red ? "color-mix(in srgb, var(--hot) 25%, var(--seg-off))" : "var(--seg-off)"));
   }
 
-  const boost = smooth("boost", v.boost);
-  if (boost == null) { $("boost").innerHTML = "--<small>bar</small>"; $("boostFill").style.width = 0; }
+  const bk = PROF.bar, boost = smooth("bar", v[bk.key]);
+  if (boost == null) { $("boost").innerHTML = `--<small>${bk.unit}</small>`; $("boostFill").style.width = 0; }
   else {
-    $("boost").innerHTML = (boost >= 0 ? "+" : "") + fmt(boost, 1) + "<small>bar</small>";
-    const z = B.pos(0), p = B.pos(clamp(boost, B.min, B.max));
+    $("boost").innerHTML = (bk.signed && boost >= 0 ? "+" : "") + fmt(boost, bk.dec) + `<small>${bk.unit}</small>`;
+    const z = B.pos(bk.signed ? 0 : B.min), p = B.pos(clamp(boost, B.min, B.max));
     Object.assign($("boostFill").style, { left: Math.min(z, p) + "%", width: Math.abs(p - z) + "%" });
     $("boostMax").style.left = B.pos(clamp(trip.boost, B.min, B.max)) + "%";
   }
 
-  for (const [k, c] of Object.entries(THERMS)) {
-    const t = smooth(k, v[k], 0.1);
+  for (const k of PROF.therms) {
+    const c = THERMS[k], t = smooth(k, v[k], 0.1);
     pendingTag(c.el, t == null && PIDS[k].o === "fab");
     c.num.textContent = t == null ? "--" : Math.round(t);
     const pct = t == null ? 0 : clamp((t - c.min) / (c.max - c.min), 0, 1) * 100;
@@ -722,15 +828,16 @@ function render() {
 
   $("fuel").textContent = fmt(v.fuel);
   $("fuelLvl").style.height = (v.fuel ?? 0) + "%";
-  $("rail").textContent = fmt(smooth("rail", v.rail), 0);
+  $("rail").textContent = fmt(smooth("t1", v[PROF.t1.key]), PROF.t1.dec);
   const kml = smooth("kml", v.kml, 0.08), lph = smooth("lph", v.lph, 0.08);
   $("cons").innerHTML = kml != null ? fmt(kml, 1) + "<small>km/L</small>" : lph != null ? fmt(lph, 1) + "<small>L/h</small>" : "—";
   $("consAvg").textContent = trip.fuel > 0.02 ? fmt(trip.km / trip.fuel, 1) : "—";
   pendingTag($("consCard"), v.lph == null);
-  $("gear").textContent = v.gear ?? "—";
-  pendingTag($("gearCard"), v.gear == null);
-  $("trac").textContent = v.trac ?? "—";
-  pendingTag($("tracCard"), v.trac == null);
+  const g2 = v[PROF.t2.key], g3 = v[PROF.t3.key];
+  $("gear").textContent = g2 == null ? "—" : PROF.t2.key === "gear" ? g2 : fmt(smooth("t2", g2), PROF.t2.dec);
+  pendingTag($("gearCard"), g2 == null && PIDS[PROF.t2.key].o === "fab");
+  $("trac").textContent = g3 == null ? "—" : typeof g3 === "number" ? fmt(smooth("t3", g3), PROF.t3.dec) + PROF.t3.unit : g3;
+  pendingTag($("tracCard"), g3 == null && PIDS[PROF.t3.key].o === "fab");
   const load = smooth("load", v.load);
   $("load").textContent = fmt(load);
   $("loadArc").setAttribute("stroke-dasharray", `${((load ?? 0) / 100) * 201} 201`);
@@ -753,7 +860,7 @@ function renderTrip() {
   $("tTime").textContent = `${h}:${String(m).padStart(2, "0")}`;
   $("tAvg").textContent = fmt(trip.secs > 5 ? trip.km / (trip.secs / 3600) : 0);
   $("tMax").textContent = fmt(trip.max);
-  $("tBoost").textContent = fmt(trip.boost, 1);
+  $("tBoost").textContent = fmt(trip.boost, PROF.bar.dec);
   $("tCool").textContent = fmt(trip.cool);
   $("tAtf").textContent = fmt(trip.atf);
   const has = trip.fuel > 0.02;
@@ -766,7 +873,7 @@ function renderData() {
   if (performance.now() - lastData < 250) return;
   lastData = performance.now();
   const names = { obd: ["OBD padrão", ""], fab: ["fábrica · a descobrir", "fab"], calc: ["calculado", "calc"] };
-  $("dataRows").innerHTML = Object.entries(PIDS).map(([k, p]) => {
+  $("dataRows").innerHTML = Object.entries(PIDS).filter(([, p]) => forCar(p)).map(([k, p]) => {
     const val = S.values[k];
     const txt = val == null ? "—" : typeof val === "number" ? fmt(val, Math.abs(val) < 10 && !Number.isInteger(val) ? 2 : 0) : val;
     const [label, cls] = S.source === "sim" ? ["simulado", "fab"] : names[p.o];
@@ -792,9 +899,9 @@ let themeMode = store.get("mode", "auto");
 function applyTheme() {
   const h = new Date().getHours();
   $("app").dataset.mode = themeMode === "auto" ? (h >= 18 || h < 6 ? "night" : "day") : themeMode;
-  document.querySelectorAll(".seg button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === themeMode)));
+  document.querySelectorAll("#themeSeg button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === themeMode)));
 }
-document.querySelectorAll(".seg button").forEach((b) => b.addEventListener("click", () => { themeMode = b.dataset.mode; store.set("mode", themeMode); applyTheme(); }));
+document.querySelectorAll("#themeSeg button").forEach((b) => b.addEventListener("click", () => { themeMode = b.dataset.mode; store.set("mode", themeMode); applyTheme(); }));
 
 function tick() {
   $("clock").textContent = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
@@ -835,7 +942,37 @@ new ResizeObserver(fit).observe($("fit"));
 
 /* ---------- início ---------- */
 if (!navigator.bluetooth) $("bleHelp").insertAdjacentHTML("afterbegin", "<b>Este navegador não tem Bluetooth para páginas</b> (iPhone e esta pré-visualização). ");
-fit(); tick(); show(store.get("view", "painel"));
+function applyProfile() {
+  PROF = PROFILES[car];
+  $("carName").innerHTML = PROF.name;
+  $("boostLabel").textContent = PROF.bar.label;
+  $("fuelLabel").textContent = PROF.fuelLabel;
+  $("railLabel").textContent = PROF.t1.label; $("railUnit").textContent = PROF.t1.unit;
+  $("gearLabel").textContent = PROF.t2.label; $("gearSub").textContent = PROF.t2.unit;
+  $("tracLabel").textContent = PROF.t3.label; $("tracIcon").style.display = PROF.t3.icon ? "" : "none";
+  $("tBoostLabel").textContent = PROF.tripBar; $("tBoostUnit").textContent = PROF.bar.unit;
+  $("tAtfLabel").textContent = PROF.tripHot2;
+  $("fuelRow").hidden = car !== "polo";
+  document.querySelectorAll("#carSeg button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.car === car)));
+  document.querySelectorAll("#fuelSeg button").forEach((b) => b.setAttribute("aria-pressed", String(parseFloat(b.dataset.fuel) === fuelMix)));
+  for (const k in shown) delete shown[k];
+  buildGauge(); buildTherms(); buildBar();
+}
+document.querySelectorAll("#carSeg button").forEach((b) => b.addEventListener("click", () => {
+  if (b.dataset.car === car) return;
+  car = b.dataset.car; store.set("car", car);
+  const wasBle = S.source === "ble";
+  stopAll(); S.values = {}; resetTrip(); applyProfile();
+  log(`Carro escolhido: ${PROF.name.replace(/<[^>]+>/g, "")}.`);
+  if (wasBle) { setConn("bad", "Desconectado"); $("connStatus").textContent = "Carro trocado. Toque em Conectar de novo."; }
+  else startSim();
+}));
+document.querySelectorAll("#fuelSeg button").forEach((b) => b.addEventListener("click", () => {
+  fuelMix = parseFloat(b.dataset.fuel); store.set("fuelMix", String(fuelMix)); applyProfile();
+  log(`Combustível no tanque: ${b.textContent}.`);
+}));
+
+fit(); tick(); show(store.get("view", "painel")); applyProfile();
 log("Bordo 4M41 aberto. Só leitura: nenhum comando de escrita sai daqui.");
 startSim();
 requestAnimationFrame(render);
