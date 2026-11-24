@@ -41,6 +41,7 @@
   --cold: #4BAEEC; --hot: #FF5B4C; --ok: #4CC27E; --warn: #F0B43A; --seg-off: #18222D; color-scheme: dark }
 
 html, body { height: 100%; }
+[hidden] { display: none !important; }
 body { background: var(--bg); color: var(--fg); font-family: var(--f-ui); overflow: hidden; }
 .app { position: fixed; inset: 0; background: var(--bg); color: var(--fg);
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
@@ -160,7 +161,9 @@ td.v { font-family: var(--f-num); font-size: 15px; font-weight: 600; text-align:
 .dtc { display: flex; flex-direction: column; gap: 8px; }
 .dtc .code { font-family: var(--f-num); font-size: 22px; font-weight: 700; color: var(--warn); }
 .conn { grid-template-columns: 1fr 1fr; }
-.conn .card { padding: 14px; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.conn .card { padding: 14px; display: flex; flex-direction: column; gap: 10px; min-height: 0; overflow: auto; }
+.chip.theme { cursor: pointer; color: var(--fg); }
+.chip.theme svg { width: 14px; height: 14px; }
 .conn h2 { margin: 0; font-family: var(--f-num); font-size: 20px; font-weight: 700; }
 .conn p { margin: 0; font-size: 12.5px; color: var(--muted); line-height: 1.45; }
 .btn { height: 38px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel-2);
@@ -192,6 +195,7 @@ td.v { font-family: var(--f-num); font-size: 15px; font-weight: 600; text-align:
         <button class="chip" id="chipDtc" type="button" title="Ver códigos de falha"><span id="dtcText">Sem falhas</span></button>
         <span class="meta"><small>ext</small><span id="ext">--</span>°</span>
         <span class="meta"><small>bat</small><span id="volts">--</span> V</span>
+        <button class="chip theme" id="btnTheme" type="button" title="Tema: toque para trocar entre Auto, Dia e Noite"><span id="themeIcon"></span><span id="themeText">Auto</span></button>
         <span class="clock" id="clock">--:--</span>
       </header>
 
@@ -919,7 +923,18 @@ function applyTheme() {
   const h = new Date().getHours();
   $("app").dataset.mode = themeMode === "auto" ? (h >= 18 || h < 6 ? "night" : "day") : themeMode;
   document.querySelectorAll("#themeSeg button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === themeMode)));
+  $("themeText").textContent = { auto: "Auto", day: "Dia", night: "Noite" }[themeMode];
+  $("themeIcon").innerHTML = THEME_ICONS[themeMode];
 }
+const THEME_ICONS = {
+  day: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
+  night: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 15.3A8.5 8.5 0 0 1 8.7 4a8.5 8.5 0 1 0 11.3 11.3z"/></svg>',
+  auto: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>',
+};
+$("btnTheme").addEventListener("click", () => {
+  themeMode = { auto: "day", day: "night", night: "auto" }[themeMode];
+  store.set("mode", themeMode); applyTheme();
+});
 document.querySelectorAll("#themeSeg button").forEach((b) => b.addEventListener("click", () => { themeMode = b.dataset.mode; store.set("mode", themeMode); applyTheme(); }));
 
 function tick() {
