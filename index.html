@@ -150,6 +150,10 @@ body { background: var(--bg); color: var(--fg); font-family: var(--f-ui); overfl
 .page { height: 100%; display: grid; gap: 8px; }
 .trip { grid-template-columns: repeat(4, 1fr); grid-template-rows: 1fr 1fr auto; }
 .trip .tile .big { font-size: 38px; }
+.trip .label { font-size: 14px; letter-spacing: .06em; }
+.trip .tile .sub { font-size: 14.5px; }
+.trip .note span { font-size: 14px; }
+.trip .note .btn { white-space: nowrap; flex: none; }
 .trip .note { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 12px;
   padding: 10px 14px; font-size: 12.5px; color: var(--muted); }
 .data { grid-template-columns: 1.45fr 1fr; }
@@ -279,7 +283,7 @@ td.v { font-family: var(--f-num); font-size: 15px; font-weight: 600; text-align:
           <div class="card tile"><div class="label">Motor mais quente</div><div class="big" id="tCool">--</div><div class="sub">°C</div></div>
           <div class="card tile"><div class="label" id="tAtfLabel">Caixa mais quente</div><div class="big" id="tAtf">--</div><div class="sub">°C</div></div>
           <div class="card tile"><div class="label">Consumo médio</div><div class="big" id="tKml">—</div><div class="sub" id="tKmlSub">km/L · precisa do débito de injeção</div></div>
-          <div class="card note"><span>A viagem começa quando o painel conecta e é zerada quando você toca em Zerar viagem.</span><button class="btn" id="tripReset" type="button">Zerar viagem</button></div>
+          <div class="card note"><span>A viagem começa quando o painel conecta.</span><button class="btn" id="tripReset" type="button">Zerar viagem</button></div>
         </div>
       </main>
 
