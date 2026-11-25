@@ -181,6 +181,39 @@ td.v { font-family: var(--f-num); font-size: 15px; font-weight: 600; text-align:
 .btn.toggle[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
 .btn.small { height: 30px; padding: 0 10px; font-size: 12px; }
 .chip.theme { cursor: pointer; color: var(--fg); }
+.chip.theme { padding: 0 9px; }
+#themeText, #layoutText { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }   /* só ícone na barra; o texto continua para leitores de tela */
+.arcs { height: 100%; display: grid; grid-template-rows: 36px 1fr 44px; gap: 6px; padding: 4px 6px; border-radius: 12px;
+  background: radial-gradient(ellipse at 50% 35%, #15181D 0%, #08090B 70%, #030304 100%); color: #F2F3F5;
+  font-family: "Saira Semi Condensed", "Arial Narrow", sans-serif; }
+.arcs-top { display: flex; align-items: center; gap: 8px; }
+.arcs-tab { height: 28px; min-width: 58px; padding: 0 10px; border-radius: 14px; border: 2px solid transparent; color: #F2F3F5;
+  background: linear-gradient(180deg, #3A3F47 0%, #22262C 50%, #15171B 100%); font: 600 15px "Saira Semi Condensed", "Arial Narrow", sans-serif;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), 0 3px 6px rgba(0, 0, 0, .7); text-shadow: 0 1px 1px #000;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; }
+.arcs-tab i { display: inline-grid; grid-template-columns: repeat(3, 4px); gap: 2px; }
+.arcs-tab i b { width: 4px; height: 4px; background: currentColor; display: block; }
+.arcs-tab[aria-pressed="true"] { border-color: #E23A2E; }
+.arcs-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 8px; min-height: 0; }
+.ag { position: relative; border-radius: 6px; border: 1px solid #343A43; overflow: hidden;
+  background: linear-gradient(180deg, #2C3037 0%, #1D2026 40%, #131519 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), inset 1px 0 0 rgba(255, 255, 255, .06), inset 0 -2px 0 rgba(0, 0, 0, .7),
+    inset 0 -14px 22px rgba(0, 0, 0, .4), 0 5px 10px rgba(0, 0, 0, .7); }
+.ag::after { content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+  background: linear-gradient(158deg, rgba(255, 255, 255, .13) 0%, rgba(255, 255, 255, .05) 34%, rgba(255, 255, 255, 0) 35%); }
+.ag svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ag .txt { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; }
+.ag .txt .big { font: 700 58px "Saira Semi Condensed", "Arial Narrow", sans-serif; line-height: 1; }
+.ag .txt .sub { font: 600 15px "Saira Semi Condensed", "Arial Narrow", sans-serif; color: #9AA1AB; margin-top: 2px; }
+.ag .name { position: absolute; left: 0; right: 0; bottom: 6px; text-align: center; font: 600 15px "Saira Semi Condensed", "Arial Narrow", sans-serif;
+  letter-spacing: .03em; text-transform: uppercase; }
+.ag .txt .big, .ag .name { text-shadow: 0 2px 2px rgba(0, 0, 0, .9); }
+.arcs-bottom { display: grid; grid-template-columns: 40px 1fr 40px; align-items: center; }
+.arcs-arrow { width: 34px; height: 34px; border-radius: 50%; border: 2px solid #C9CDD3; color: #fff; display: grid; place-items: center; cursor: pointer;
+  background: radial-gradient(circle at 40% 35%, #3A3F47, #15181C); box-shadow: 0 3px 6px rgba(0, 0, 0, .8), inset 0 1px 1px rgba(255, 255, 255, .4); }
+.arcs-arrow svg { width: 13px; height: 13px; }
+.arcs-title { text-align: center; font: 700 26px "Saira Semi Condensed", "Arial Narrow", sans-serif; letter-spacing: .04em; text-transform: uppercase; text-shadow: 0 2px 3px #000; }
+.arcs-tab:focus-visible, .arcs-arrow:focus-visible { outline: 2px solid #F29A1E; outline-offset: 2px; }
 .chip.theme svg { width: 14px; height: 14px; }
 .conn h2 { margin: 0; font-family: var(--f-num); font-size: 20px; font-weight: 700; }
 .conn p { margin: 0; font-size: 12.5px; color: var(--muted); line-height: 1.45; }
@@ -213,6 +246,7 @@ td.v { font-family: var(--f-num); font-size: 15px; font-weight: 600; text-align:
         <button class="chip" id="chipDtc" type="button" title="Ver códigos de falha"><span id="dtcText">Sem falhas</span></button>
         <span class="meta"><small>ext</small><span id="ext">--</span>°</span>
         <span class="meta"><small>bat</small><span id="volts">--</span> V</span>
+        <button class="chip theme" id="btnLayout" type="button" title="Layout do painel: toque para trocar entre Clássico e Arcos 3D"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="8" height="7" rx="1.5"/><rect x="13" y="4" width="8" height="7" rx="1.5"/><rect x="3" y="13" width="8" height="7" rx="1.5"/><rect x="13" y="13" width="8" height="7" rx="1.5"/></svg><span id="layoutText">Clássico</span></button>
         <button class="chip theme" id="btnTheme" type="button" title="Tema: toque para trocar entre Auto, Dia e Noite"><span id="themeIcon"></span><span id="themeText">Auto</span></button>
         <span class="clock" id="clock">--:--</span>
       </header>
@@ -271,6 +305,15 @@ td.v { font-family: var(--f-num); font-size: 15px; font-weight: 600; text-align:
               <div class="ring"><svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="32" fill="none" stroke="var(--seg-off)" stroke-width="8"/><circle id="loadArc" cx="40" cy="40" r="32" fill="none" stroke="var(--ok)" stroke-width="8" stroke-linecap="round" stroke-dasharray="0 201"/></svg><div class="num" id="load">--</div></div>
             </div>
           </section>
+        </div>
+        <div class="arcs" id="arcs" hidden>
+          <div class="arcs-top" id="arcTabs"></div>
+          <div class="arcs-grid" id="arcGrid"></div>
+          <div class="arcs-bottom">
+            <button class="arcs-arrow" id="arcPrev" type="button" aria-label="Tela anterior"><svg viewBox="0 0 10 10"><path d="M7 1L2 5l5 4z" fill="currentColor"/></svg></button>
+            <div class="arcs-title" id="arcTitle"></div>
+            <button class="arcs-arrow" id="arcNext" type="button" aria-label="Próxima tela"><svg viewBox="0 0 10 10"><path d="M3 1l5 4-5 4z" fill="currentColor"/></svg></button>
+          </div>
         </div>
       </main>
 
@@ -916,6 +959,7 @@ function render() {
   if (S.dtcs.length) { dtc.className = "chip fault"; $("dtcText").textContent = `⚠ ${S.dtcs.length === 1 ? "Falha " + S.dtcs[0] : S.dtcs.length + " falhas"}${S.dtcSim ? " (simulada)" : ""}`; }
   else { dtc.className = "chip ok"; $("dtcText").textContent = "Sem falhas"; }
 
+  if (layout === "arcs" && current === "painel") Arcs.update();
   if (current === "viagem") renderTrip();
   if (current === "dados") renderData();
   requestAnimationFrame(render);
@@ -1081,6 +1125,181 @@ new ResizeObserver(fit).observe($("fit"));
 
 /* ---------- início ---------- */
 if (!navigator.bluetooth) $("bleHelp").insertAdjacentHTML("afterbegin", "<b>Sem Bluetooth neste navegador</b> (iPhone e prévia). ");
+/* ---------- layout "Arcos 3D": seis mostradores por tela, três telas por carro ---------- */
+const Arcs = (() => {
+  const VIEWS = {
+    pajero: [
+      { name: "Motor", g: [
+        { k: "coolant", n: "Temp. motor", u: "°C", min: 40, max: 120, step: 20, warn: 100, hot: 110 },
+        { k: "boost", n: "Turbo", u: "bar", min: -0.5, max: 1.5, step: 0.5, warn: 1.3, hot: 1.45, dec: 1 },
+        { k: "rail", n: "Pressão rail", u: "MPa", min: 0, max: 180, step: 30, warn: 165, hot: 175 },
+        { k: "iat", n: "Temp. admissão", u: "°C", min: 0, max: 80, step: 20, warn: 55, hot: 65 },
+        { k: "load", n: "Carga", u: "%", min: 0, max: 100, step: 25 },
+        { k: "rpm", n: "Rotação", u: "rpm", min: 0, max: 4500, step: 1000, warn: 3800, hot: 4000, lab: 1000 },
+      ] },
+      { name: "Câmbio e consumo", g: [
+        { k: "atf", n: "Temp. caixa", u: "°C", min: 40, max: 130, step: 30, warn: 105, hot: 115 },
+        { type: "text", k: "gear", n: "Marcha", sub: "AUTOMÁTICO" },
+        { type: "split", k: "trac", n: "Tração" },
+        { k: "kml", n: "Consumo", u: "km/L", min: 0, max: 20, step: 5, dec: 1 },
+        { k: "avg", n: "Média viagem", u: "km/L", min: 0, max: 20, step: 5, dec: 1 },
+        { k: "fuel", n: "Diesel", u: "%", min: 0, max: 100, step: 25, low: 15 },
+      ] },
+      { name: "Elétrica e ar", g: [
+        { k: "volts", n: "Bateria", u: "V", min: 10, max: 16, step: 1, warn: 15, hot: 15.5, low: 12, dec: 1 },
+        { k: "maf", n: "Fluxo de ar", u: "g/s", min: 0, max: 200, step: 50 },
+        { k: "egr", n: "EGR", u: "%", min: 0, max: 100, step: 25 },
+        { k: "pedal", n: "Acelerador", u: "%", min: 0, max: 100, step: 25 },
+        { k: "baro", n: "Pressão atm.", u: "kPa", min: 60, max: 110, step: 10 },
+        { k: "ambient", n: "Temp. externa", u: "°C", min: -10, max: 50, step: 10, warn: 40, hot: 45 },
+      ] },
+    ],
+    polo: [
+      { name: "Motor", g: [
+        { k: "coolant", n: "Temp. motor", u: "°C", min: 40, max: 120, step: 20, warn: 100, hot: 110 },
+        { k: "map", n: "Coletor", u: "kPa", min: 20, max: 110, step: 15 },
+        { k: "advance", n: "Avanço", u: "°", min: -10, max: 50, step: 10 },
+        { k: "iat", n: "Temp. admissão", u: "°C", min: 0, max: 80, step: 20, warn: 55, hot: 65 },
+        { k: "load", n: "Carga", u: "%", min: 0, max: 100, step: 25 },
+        { k: "rpm", n: "Rotação", u: "rpm", min: 0, max: 7000, step: 1000, warn: 6000, hot: 6250, lab: 1000 },
+      ] },
+      { name: "Marcha e consumo", g: [
+        { k: "cat", n: "Catalisador", u: "°C", min: 100, max: 900, step: 200, warn: 750, hot: 820 },
+        { type: "text", k: "mgear", n: "Marcha", sub: "MANUAL" },
+        { k: "trim", n: "Correção", u: "%", min: -25, max: 25, step: 10, warn: 15, hot: 20, low: -15, dec: 1 },
+        { k: "kml", n: "Consumo", u: "km/L", min: 0, max: 20, step: 5, dec: 1 },
+        { k: "avg", n: "Média viagem", u: "km/L", min: 0, max: 20, step: 5, dec: 1 },
+        { k: "fuel", n: "Tanque", u: "%", min: 0, max: 100, step: 25, low: 15 },
+      ] },
+      { name: "Elétrica e ar", g: [
+        { k: "volts", n: "Bateria", u: "V", min: 10, max: 16, step: 1, warn: 15, hot: 15.5, low: 12, dec: 1 },
+        { k: "throttle", n: "Borboleta", u: "%", min: 0, max: 100, step: 25 },
+        { k: "stft", n: "Correção curta", u: "%", min: -25, max: 25, step: 10, dec: 1 },
+        { k: "ltft", n: "Correção longa", u: "%", min: -25, max: 25, step: 10, dec: 1 },
+        { k: "baro", n: "Pressão atm.", u: "kPa", min: 60, max: 110, step: 10 },
+        { k: "ambient", n: "Temp. externa", u: "°C", min: -10, max: 50, step: 10, warn: 40, hot: 45 },
+      ] },
+    ],
+  };
+  const NS = "http://www.w3.org/2000/svg", FONT = "Saira Semi Condensed, Arial Narrow, sans-serif";
+  const W = 252, H = 182, CX = 126, CY = 101, R = 57, BAND = 28, A0 = 210, SWEEP = 240;
+  const ORANGE = "#F29A1E", RED = "#E23A2E", FG = "#F2F3F5";
+  const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); parent?.appendChild(e); return e; };
+  const pt = (a, r) => [CX + r * Math.cos(a * Math.PI / 180), CY - r * Math.sin(a * Math.PI / 180)];
+  const ring = (a1, a2, r1, r2) => {
+    const [x1, y1] = pt(a1, r2), [x2, y2] = pt(a2, r2), [x3, y3] = pt(a2, r1), [x4, y4] = pt(a1, r1), large = a1 - a2 > 180 ? 1 : 0;
+    return `M${x1} ${y1} A${r2} ${r2} 0 ${large} 1 ${x2} ${y2} L${x3} ${y3} A${r1} ${r1} 0 ${large} 0 ${x4} ${y4}Z`;
+  };
+  const stops = (g, list) => list.forEach(([o, c]) => el("stop", { offset: o, "stop-color": c }, g));
+  const num = (v, c) => (c.min < 0 && v > 0 ? "+" : "") + fmt(v, c.dec ?? 0);
+
+  function gauge(card, c, i) {
+    const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, "aria-hidden": "true" }, card), defs = el("defs", {}, svg), id = (x) => `a${x}${i}`;
+    stops(el("linearGradient", { id: id("band"), gradientUnits: "userSpaceOnUse", x1: CX - R, y1: CY + 20, x2: CX + R, y2: CY - 20 }, defs), [[0, "#FFFFFF"], [0.45, "#EEF0F2"], [0.8, "#B9BEC4"], [1, "#8C9299"]]);
+    const sh = el("filter", { id: id("sh"), filterUnits: "userSpaceOnUse", x: 0, y: 0, width: W, height: H }, defs);
+    el("feDropShadow", { dx: 0, dy: 2, stdDeviation: 1.6, "flood-color": "#000", "flood-opacity": 0.85 }, sh);
+    stops(el("radialGradient", { id: id("face"), cx: 0.5, cy: 0.62, r: 0.62 }, defs), [[0, "#1C2026"], [0.75, "#0B0D10"], [1, "#030405"]]);
+    stops(el("linearGradient", { id: id("lip"), x1: 0, y1: 0, x2: 0, y2: 1 }, defs), [[0, "#000000"], [0.55, "#2A2F36"], [1, "#6B727C"]]);
+    stops(el("linearGradient", { id: id("gl"), gradientUnits: "userSpaceOnUse", x1: 0, y1: CY - R, x2: 0, y2: CY + 6 }, defs), [[0, "rgba(255,255,255,0.75)"], [0.5, "rgba(255,255,255,0.18)"], [1, "rgba(255,255,255,0)"]]);
+    stops(el("radialGradient", { id: id("hub"), cx: 0.38, cy: 0.3, r: 0.85 }, defs), [[0, "#4A5059"], [0.45, "#1E2228"], [1, "#07080A"]]);
+    stops(el("linearGradient", { id: id("rim"), x1: 0, y1: 0, x2: 0, y2: 1 }, defs), [[0, "#8D949E"], [0.5, "#2A2E35"], [1, "#000000"]]);
+    const ang = (v) => A0 - ((clamp(v, c.min, c.max) - c.min) / (c.max - c.min)) * SWEEP, shadow = `url(#${id("sh")})`;
+    el("circle", { cx: CX, cy: CY, r: R + 2, fill: `url(#${id("face")})`, stroke: `url(#${id("lip")})`, "stroke-width": 2.5 }, svg);
+    el("path", { d: ring(A0, A0 - SWEEP, R - BAND, R), fill: "#1A1D22" }, svg);
+    const band = el("path", { d: "", fill: `url(#${id("band")})`, filter: shadow }, svg);
+    const shine = el("path", { d: "", fill: `url(#${id("gl")})` }, svg);
+    el("circle", { cx: CX, cy: CY, r: R - BAND, fill: `url(#${id("hub")})`, stroke: `url(#${id("rim")})`, "stroke-width": 2, filter: shadow }, svg);
+    el("ellipse", { cx: CX - 6, cy: CY - (R - BAND) * 0.45, rx: (R - BAND) * 0.55, ry: (R - BAND) * 0.28, fill: "rgba(255,255,255,0.10)" }, svg);
+    const n = Math.round((c.max - c.min) / c.step);
+    for (let j = 0; j <= n * 2; j++) {
+      const v = c.min + (j * c.step) / 2, major = j % 2 === 0, a = ang(v);
+      const zone = c.hot != null && v >= c.hot ? RED : c.warn != null && v >= c.warn ? ORANGE : null;
+      const [x1, y1] = pt(a, R + 3), [x2, y2] = pt(a, R + (major ? 15 : 10));
+      el("line", { x1, y1, x2, y2, stroke: zone || FG, "stroke-width": zone ? 6 : major ? 3.4 : 2.2, filter: shadow }, svg);
+      if (major) {
+        const [x, y] = pt(a, R + 28);
+        el("text", { x, y: y + 6, "text-anchor": "middle", "font-size": 18, "font-weight": 600, fill: FG, "font-family": FONT, filter: shadow }, svg)
+          .textContent = (c.min < 0 && v > 0 ? "+" : "") + fmt(v / (c.lab || 1), c.step < 1 ? 1 : 0);
+      }
+    }
+    el("text", { x: CX, y: CY + 2, "text-anchor": "middle", "font-size": 17, "font-weight": 600, fill: FG, "font-family": FONT }, svg).textContent = c.u;
+    const big = el("text", { x: CX, y: CY + 44, "text-anchor": "middle", "font-size": 46, "font-weight": 700, fill: FG, "font-family": FONT, filter: shadow }, svg);
+    return (v) => {
+      if (v == null) { band.setAttribute("d", ""); shine.setAttribute("d", ""); big.textContent = "--"; big.setAttribute("fill", FG); big.setAttribute("font-size", 46); return; }
+      const d = ring(A0, Math.min(A0 - 0.5, ang(v)), R - BAND, R);
+      band.setAttribute("d", d); shine.setAttribute("d", d);
+      big.textContent = num(c.lab ? Math.round(v / 10) * 10 : v, c);
+      big.setAttribute("font-size", big.textContent.length > 4 ? 36 : 46);
+      big.setAttribute("fill", (c.hot != null && v >= c.hot) || (c.low != null && v <= c.low) ? RED : c.warn != null && v >= c.warn ? ORANGE : FG);
+    };
+  }
+
+  // Divisão de tração (Super Select): 2H só traseira; 4H ~33% na dianteira; 4HLc/4LLc travado (50/50)
+  function split(card) {
+    const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, "aria-hidden": "true" }, card), defs = el("defs", {}, svg);
+    stops(el("linearGradient", { id: "asplit", x1: 0, y1: 0, x2: 1, y2: 0 }, defs), [[0, "#6E747C"], [0.25, "#D9DCE0"], [0.45, "#FFFFFF"], [0.7, "#C3C7CC"], [1, "#5E646C"]]);
+    const sh = el("filter", { id: "asplitsh", filterUnits: "userSpaceOnUse", x: 0, y: 0, width: W, height: H }, defs);
+    el("feDropShadow", { dx: 0, dy: 2, stdDeviation: 1.6, "flood-color": "#000", "flood-opacity": 0.85 }, sh);
+    const X0 = 74, X1 = 196, Y0 = 26, Y1 = 140;
+    el("text", { x: X0 - 10, y: Y0 + 8, "text-anchor": "end", "font-size": 18, "font-weight": 600, fill: FG, "font-family": FONT }, svg).textContent = "4WD";
+    el("text", { x: X0 - 10, y: Y1, "text-anchor": "end", "font-size": 18, "font-weight": 600, fill: FG, "font-family": FONT }, svg).textContent = "2WD";
+    el("rect", { x: X0 + 14, y: Y0, width: X1 - X0 - 28, height: Y1 - Y0, rx: 3, fill: "#06070A", stroke: "#2E333B", "stroke-width": 1.5 }, svg);
+    const bar = el("rect", { x: X0 + 14, y: Y1, width: X1 - X0 - 28, height: 0, rx: 3, fill: "url(#asplit)", filter: "url(#asplitsh)" }, svg);
+    el("line", { x1: X0, y1: Y0 - 4, x2: X0, y2: Y1 + 2, stroke: FG, "stroke-width": 2.5 }, svg);
+    el("line", { x1: X0 - 1, y1: Y1 + 1, x2: X1, y2: Y1 + 1, stroke: FG, "stroke-width": 2.5 }, svg);
+    const mode = el("text", { x: W - 14, y: Y0 + 10, "text-anchor": "end", "font-size": 22, "font-weight": 700, fill: ORANGE, "font-family": FONT }, svg);
+    return (m) => {
+      const share = { "2H": 0, "4H": 0.66, "4HLc": 1, "4LLc": 1 }[m], h = share == null ? 0 : Math.max(3, share * (Y1 - Y0));
+      bar.setAttribute("y", Y1 - h); bar.setAttribute("height", h); mode.textContent = m ?? "--";
+    };
+  }
+
+  let page = clamp(parseInt(store.get("arcPage", "0"), 10) || 0, 0, 2), ups = [], sm = [];
+  function build() {
+    const views = VIEWS[car], grid = $("arcGrid");
+    grid.innerHTML = ""; ups = []; sm = [];
+    views[page].g.forEach((c, i) => {
+      const card = document.createElement("div"); card.className = "ag";
+      if (c.type === "text") {
+        card.innerHTML = `<div class="txt"><div><div class="big">--</div><div class="sub">${c.sub}</div></div></div>`;
+        const big = card.querySelector(".big");
+        ups.push((v) => { big.textContent = v ?? "--"; });
+      } else ups.push(c.type === "split" ? split(card) : gauge(card, c, i));
+      const name = document.createElement("div"); name.className = "name"; name.textContent = c.n; card.appendChild(name);
+      grid.appendChild(card);
+    });
+    $("arcTabs").innerHTML = views.map((v, i) => `<button class="arcs-tab" type="button" data-i="${i}" aria-pressed="${i === page}" title="${v.name}">${i + 1}<i>${"<b></b>".repeat(6)}</i></button>`).join("");
+    $("arcTabs").querySelectorAll(".arcs-tab").forEach((b) => b.addEventListener("click", () => go(+b.dataset.i)));
+    $("arcTitle").textContent = `Tela ${page + 1} · ${views[page].name}`;
+  }
+  function go(i) { page = (i + 3) % 3; store.set("arcPage", String(page)); build(); }
+  $("arcPrev").addEventListener("click", () => go(page - 1));
+  $("arcNext").addEventListener("click", () => go(page + 1));
+  function update() {
+    const v = { ...S.values, avg: trip.fuel > 0.02 ? trip.km / trip.fuel : null };
+    VIEWS[car][page].g.forEach((c, i) => {
+      let x = v[c.k];
+      if (typeof x === "number" && c.type !== "text") x = sm[i] = sm[i] == null ? x : sm[i] + (x - sm[i]) * 0.2;
+      else if (x == null) sm[i] = null;
+      ups[i]?.(x);
+    });
+  }
+  return { build, update };
+})();
+
+let layout = store.get("layout", "classic") === "arcs" ? "arcs" : "classic";
+function applyLayout() {
+  document.querySelector("#v-painel .dash").hidden = layout === "arcs";
+  $("arcs").hidden = layout !== "arcs";
+  $("layoutText").textContent = layout === "arcs" ? "Arcos 3D" : "Clássico";
+}
+$("btnLayout").addEventListener("click", () => {
+  layout = layout === "arcs" ? "classic" : "arcs";
+  store.set("layout", layout); applyLayout();
+  if (current !== "painel") show("painel");
+  log(`Layout do painel: ${layout === "arcs" ? "Arcos 3D" : "Clássico"}.`);
+});
+
 function applyProfile() {
   PROF = PROFILES[car];
   $("carName").innerHTML = PROF.name;
@@ -1096,6 +1315,7 @@ function applyProfile() {
   document.querySelectorAll("#fuelSeg button").forEach((b) => b.setAttribute("aria-pressed", String(parseFloat(b.dataset.fuel) === fuelMix)));
   for (const k in shown) delete shown[k];
   buildGauge(); buildTherms(); buildBar();
+  Arcs.build(); applyLayout();
 }
 document.querySelectorAll("#carSeg button").forEach((b) => b.addEventListener("click", () => {
   if (b.dataset.car === car) return;
