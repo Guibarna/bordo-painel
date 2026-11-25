@@ -176,6 +176,7 @@ td.v { font-family: var(--f-num); font-size: 15px; font-weight: 600; text-align:
 .settings .seg { justify-self: start; }
 .settings-sub[hidden] { display: none !important; }
 .hint { font-size: 11.5px; color: var(--muted); }
+.hint.eth { display: block; text-transform: none; letter-spacing: 0; font-weight: 500; margin-top: 2px; }
 .clear-confirm { border: 1px solid var(--warn); border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
 .clear-confirm p { margin: 0; font-size: 12.5px; line-height: 1.45; color: var(--fg); }
 .btn.toggle[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
@@ -364,9 +365,9 @@ td.v { font-family: var(--f-num); font-size: 15px; font-weight: 600; text-align:
                 <button type="button" data-car="polo" aria-pressed="false">Polo 1.6 flex</button>
               </div>
               <div class="settings-sub" id="fuelRow" hidden>
-                <span class="label">No tanque</span>
+                <span class="label">No tanque<span class="hint eth" id="ethHint"></span></span>
                 <div class="seg" role="group" aria-label="Combustível no tanque" id="fuelSeg">
-                  <button type="button" data-fuel="0.27" aria-pressed="true">Gasolina</button>
+                  <button type="button" data-fuel="0.3" aria-pressed="true">Gasolina</button>
                   <button type="button" data-fuel="0.6" aria-pressed="false">Mistura</button>
                   <button type="button" data-fuel="1" aria-pressed="false">Etanol</button>
                 </div>
@@ -496,7 +497,9 @@ const PROFILES = {
 let car = store.get("car", "pajero");
 if (!PROFILES[car]) car = "pajero";
 let PROF = PROFILES[car];
-let fuelMix = parseFloat(store.get("fuelMix", "0.27")) || 0.27;   // fração de etanol no tanque
+// Fração de etanol no tanque. Gasolina comum no Brasil = E30 (30% de etanol desde ago/2025).
+let fuelMix = parseFloat(store.get("fuelMix", "0.3")) || 0.3;
+if (fuelMix === 0.27) { fuelMix = 0.3; store.set("fuelMix", "0.3"); }   // escolha antiga (E27)
 const forCar = (p) => !p.cars || p.cars.includes(car);
 const VE = 0.85;          // eficiência volumétrica média do 1.6 8V (calibrar com o consumo por tanque)
 const DISPLACEMENT = 0.001598; // m³
@@ -570,7 +573,7 @@ function startSim() {
       Object.assign(S.values, {
         rpm, speed, map: 30 + a * 68, baro: 94, throttle: 8 + a * 80, load: 18 + a * 72,
         coolant: Math.min(92, 50 + t * 1.6), iat: 34 + a * 6, cat: Math.min(720, 380 + t * 8 + a * 120),
-        stft: Math.sin(t / 2.3) * 3, ltft: 2.3, advance: 12 + (1 - a) * 18, volts: 14.2, fuel: 48, ambient: 24,
+        stft: Math.sin(t / 2.3) * 3, ltft: 2.3, advance: 12 + (1 - a) * 18, volts: 14.2, fuel: 48, ambient: 24, ethanol: fuelMix * 100,
       });
       deriveAndTrip(performance.now());
       return;
@@ -953,6 +956,7 @@ function render() {
   $("loadArc").setAttribute("stroke-opacity", load ? 1 : 0);
 
   $("ext").textContent = fmt(v.ambient);
+  if (car === "polo") $("ethHint").textContent = v.ethanol != null ? `ECU: ${fmt(v.ethanol)}%` : (S.source === "ble" ? "ECU não informa" : "");
   $("volts").textContent = fmt(v.volts, 1);
 
   const dtc = $("chipDtc");
@@ -1176,7 +1180,7 @@ const Arcs = (() => {
         { k: "throttle", n: "Borboleta", u: "%", min: 0, max: 100, step: 25 },
         { k: "stft", n: "Correção curta", u: "%", min: -25, max: 25, step: 10, dec: 1 },
         { k: "ltft", n: "Correção longa", u: "%", min: -25, max: 25, step: 10, dec: 1 },
-        { k: "baro", n: "Pressão atm.", u: "kPa", min: 60, max: 110, step: 10 },
+        { k: "ethanol", n: "Etanol no combustível", u: "%", min: 0, max: 100, step: 25 },
         { k: "ambient", n: "Temp. externa", u: "°C", min: -10, max: 50, step: 10, warn: 40, hot: 45 },
       ] },
     ],
