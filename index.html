@@ -95,12 +95,12 @@ body { background: var(--bg); color: var(--fg); font-family: var(--f-ui); overfl
 .g-gauge svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .rpm-read { position: absolute; left: 16px; top: 12px; }
 .rpm-read .num { font-size: 26px; font-weight: 700; line-height: 1; }
-.rpm-read .unit { font-size: 11px; color: var(--muted); }
+.rpm-read .unit { font-size: 13px; color: var(--muted); }
 .gauge-cap { position: absolute; left: 0; right: 0; bottom: 10px; text-align: center; }
 
 .g-turbo { grid-area: turbo; display: grid; grid-template-columns: 96px 1fr; align-items: center; padding: 0 14px; gap: 10px; }
 .turbo-val { font-family: var(--f-num); font-weight: 700; font-size: 28px; line-height: 1; font-variant-numeric: tabular-nums; }
-.turbo-val small { font-size: 12px; color: var(--muted); font-weight: 500; margin-left: 2px; }
+.turbo-val small { font-size: 16px; color: var(--muted); font-weight: 500; margin-left: 2px; }
 .hbar { position: relative; height: 34px; }
 .hbar .track { position: absolute; left: 0; right: 0; top: 18px; height: 10px; border-radius: 5px; background: var(--seg-off); }
 .hbar .fill { position: absolute; top: 18px; height: 10px; background: var(--accent); border-radius: 2px; }
@@ -123,15 +123,15 @@ body { background: var(--bg); color: var(--fg); font-family: var(--f-ui); overfl
 .therm .icon svg { width: 22px; height: 22px; }
 .therm .read { text-align: center; padding-top: 6px; }
 .therm .read .num { font-size: 30px; font-weight: 700; line-height: 1; }
-.therm .read .unit { font-size: 11px; color: var(--muted); }
+.therm .read .unit { font-size: 14px; color: var(--muted); }
 
 .g-bottom { grid-area: bottom; display: grid; grid-template-columns: 0.55fr 0.8fr 1.25fr 0.72fr 1fr 0.78fr; gap: 8px; }
-.cons .big small { font-size: 15px; color: var(--muted); font-weight: 600; margin-left: 3px; }
-.cons .avg { font-size: 12px; color: var(--muted); margin-top: 4px; font-weight: 600; white-space: nowrap; }
-.cons .avg b { color: var(--fg); font-family: var(--f-num); font-size: 15px; }
+.cons .big small { font-size: 18px; color: var(--muted); font-weight: 600; margin-left: 3px; }
+.cons .avg { font-size: 13px; color: var(--muted); margin-top: 4px; font-weight: 600; white-space: nowrap; }
+.cons .avg b { color: var(--fg); font-family: var(--f-num); font-size: 16px; }
 .tile { padding: 10px 12px; display: flex; flex-direction: column; }
 .tile .big { font-family: var(--f-num); font-weight: 700; font-size: 40px; line-height: 1; margin-top: auto; font-variant-numeric: tabular-nums; }
-.tile .sub { font-size: 12px; color: var(--muted); margin-top: 4px; font-weight: 600; letter-spacing: .04em; }
+.tile .sub { font-size: 15px; color: var(--muted); margin-top: 4px; font-weight: 600; letter-spacing: .04em; }
 .tile.center { align-items: center; text-align: center; }
 .fuel { display: grid; grid-template-columns: 1fr 14px; gap: 8px; padding: 10px; }
 .fuel .tube { position: relative; border-radius: 4px; background: var(--seg-off); overflow: hidden; }
@@ -151,7 +151,7 @@ body { background: var(--bg); color: var(--fg); font-family: var(--f-ui); overfl
 .trip { grid-template-columns: repeat(4, 1fr); grid-template-rows: 1fr 1fr auto; }
 .trip .tile .big { font-size: 38px; }
 .trip .label { font-size: 14px; letter-spacing: .06em; }
-.trip .tile .sub { font-size: 14.5px; }
+.trip .tile .sub { font-size: 17px; }
 .trip .note span { font-size: 14px; }
 .trip .note .btn { white-space: nowrap; flex: none; }
 .trip .note { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 12px;
@@ -235,7 +235,7 @@ td.v { font-family: var(--f-num); font-size: 15px; font-weight: 600; text-align:
         <div class="dash">
           <section class="card g-gauge" aria-label="Velocidade e rotação">
             <svg id="gauge" viewBox="0 0 418 238" aria-hidden="true"></svg>
-            <div class="rpm-read"><div class="num" id="rpm">0</div><div class="unit">rpm · escala ×1000</div></div>
+            <div class="rpm-read"><div class="num" id="rpm">0</div><div class="unit">rpm</div></div>
           </section>
 
           <section class="card g-turbo" aria-label="Turbo">
@@ -804,7 +804,7 @@ function buildGauge() {
   }
   const mk = (attrs, txt) => { const t = document.createElementNS(ns, "text"); Object.entries(attrs).forEach(([k, v]) => t.setAttribute(k, v)); t.textContent = txt; svg.appendChild(t); return t; };
   G.speed = mk({ x: G.cx, y: G.cy + 4, "text-anchor": "middle", "font-size": 96, "font-weight": 700, fill: "var(--fg)", "font-family": "Saira Semi Condensed, Arial Narrow, sans-serif" }, "0");
-  mk({ x: G.cx, y: G.cy + 28, "text-anchor": "middle", "font-size": 14, fill: "var(--muted)", "font-family": "Inter, sans-serif" }, "km/h");
+  mk({ x: G.cx, y: G.cy + 32, "text-anchor": "middle", "font-size": 18, fill: "var(--muted)", "font-family": "Inter, sans-serif" }, "km/h");
 }
 
 /* ---------- tela: termômetros ---------- */
