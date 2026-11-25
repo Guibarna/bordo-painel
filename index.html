@@ -81,8 +81,11 @@ body { background: var(--bg); color: var(--fg); font-family: var(--f-ui); overfl
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; position: relative; overflow: hidden; }
 .label { font-size: 11px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); }
 .num { font-family: var(--f-num); font-variant-numeric: tabular-nums; }
-.pending { position: absolute; right: 8px; top: 8px; font-size: 9.5px; font-weight: 600; letter-spacing: .06em;
-  text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); border-radius: 6px; padding: 1px 5px; }
+.pending { display: inline-block; align-self: flex-start; margin-top: 5px; font-size: 9.5px; font-weight: 600; letter-spacing: .06em; line-height: 1.4;
+  text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); border-radius: 6px; padding: 0 5px; white-space: nowrap; }
+.tile.center .pending, .therm .pending { align-self: center; }
+.therm .read .label { letter-spacing: .04em; white-space: nowrap; }
+.is-pending .sub, .is-pending .avg { display: none; }
 
 /* ---------- tela Painel ---------- */
 .dash { height: 100%; display: grid; gap: 8px;
@@ -229,7 +232,6 @@ td.v { font-family: var(--f-num); font-size: 15px; font-weight: 600; text-align:
           <section class="card g-gauge" aria-label="Velocidade e rotação">
             <svg id="gauge" viewBox="0 0 418 238" aria-hidden="true"></svg>
             <div class="rpm-read"><div class="num" id="rpm">0</div><div class="unit">rpm · escala ×1000</div></div>
-            <div class="gauge-cap label">Velocidade &amp; rotação</div>
           </section>
 
           <section class="card g-turbo" aria-label="Turbo">
@@ -790,15 +792,15 @@ function buildGauge() {
   }
   for (let k = 0; k <= Math.floor(G.max / 1000); k++) {
     const a = G.a0 - (k * 1000 / G.max) * (G.a0 - G.a1);
-    const [x, y] = pt(a, G.r - 34);
+    const [x, y] = pt(a, G.r - 42);
     const t = document.createElementNS(ns, "text");
     Object.entries({ x, y: y + 4, "text-anchor": "middle", "font-size": 12, "font-family": "Saira Semi Condensed, Arial Narrow, sans-serif", fill: "var(--muted)" }).forEach(([kk, v]) => t.setAttribute(kk, v));
     t.textContent = k;
     svg.appendChild(t);
   }
   const mk = (attrs, txt) => { const t = document.createElementNS(ns, "text"); Object.entries(attrs).forEach(([k, v]) => t.setAttribute(k, v)); t.textContent = txt; svg.appendChild(t); return t; };
-  G.speed = mk({ x: G.cx, y: G.cy + 2, "text-anchor": "middle", "font-size": 104, "font-weight": 700, fill: "var(--fg)", "font-family": "Saira Semi Condensed, Arial Narrow, sans-serif" }, "0");
-  mk({ x: G.cx + 92, y: G.cy - 4, "font-size": 14, fill: "var(--muted)", "font-family": "Inter, sans-serif" }, "km/h");
+  G.speed = mk({ x: G.cx, y: G.cy + 4, "text-anchor": "middle", "font-size": 96, "font-weight": 700, fill: "var(--fg)", "font-family": "Saira Semi Condensed, Arial Narrow, sans-serif" }, "0");
+  mk({ x: G.cx, y: G.cy + 28, "text-anchor": "middle", "font-size": 14, fill: "var(--muted)", "font-family": "Inter, sans-serif" }, "km/h");
 }
 
 /* ---------- tela: termômetros ---------- */
@@ -843,8 +845,13 @@ function smooth(k, target, f = 0.25) {
   return shown[k];
 }
 const pendingTag = (el, on) => {
+  el.classList.toggle("is-pending", on);
   let tag = el.querySelector(".pending");
-  if (on && !tag) { tag = document.createElement("span"); tag.className = "pending"; tag.textContent = "a descobrir"; el.appendChild(tag); }
+  if (on && !tag) {
+    tag = document.createElement("span"); tag.className = "pending"; tag.textContent = "a descobrir";
+    const read = el.querySelector(".read");           // temperatura: embaixo do número
+    if (read) read.appendChild(tag); else el.querySelector(".label").after(tag);   // quadro: embaixo do título
+  }
   if (!on && tag) tag.remove();
 };
 
@@ -892,6 +899,7 @@ function render() {
   const load = smooth("load", v.load);
   $("load").textContent = fmt(load);
   $("loadArc").setAttribute("stroke-dasharray", `${((load ?? 0) / 100) * 201} 201`);
+  $("loadArc").setAttribute("stroke-opacity", load ? 1 : 0);
 
   $("ext").textContent = fmt(v.ambient);
   $("volts").textContent = fmt(v.volts, 1);
@@ -1009,7 +1017,7 @@ $("btnWake").addEventListener("click", () => {
 $("btnBle").addEventListener("click", startBle);
 $("btnSim").addEventListener("click", startSim);
 $("btnStop").addEventListener("click", () => {
-  const was = S.source; stopAll(); S.values = {}; setConn("bad", "Desconectado");
+  const was = S.source; stopAll(); S.values = {}; S.dtcs = []; S.dtcSim = false; setConn("bad", "Desconectado");
   $("connStatus").textContent = "Desconectado."; log(was === "sim" ? "Simulação parada." : "Desconectado pelo usuário.");
 });
 $("tripReset").addEventListener("click", () => { resetTrip(); log("Viagem zerada."); });
