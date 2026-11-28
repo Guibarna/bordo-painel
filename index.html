@@ -8,6 +8,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <style>*,*::before,*::after{box-sizing:border-box}[hidden]{display:none!important}body{margin:0}</style>
+<!-- Bordo — © 2026. Todos os direitos reservados. Uso permitido somente com licença. -->
 <title>Bordo 4M41</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -174,12 +175,22 @@ td.v { font-family: var(--f-num); font-size: 15px; font-weight: 600; text-align:
 .settings { display: grid; grid-template-columns: 78px 1fr; gap: 12px 10px; align-items: center; }
 .settings-sub { display: contents; }
 .settings .seg { justify-self: start; }
+#carSel { justify-self: start; height: 34px; min-width: 200px; max-width: 100%; padding: 0 10px; border-radius: 10px; border: 1px solid var(--line);
+  background: var(--panel-2); color: var(--fg); font: 600 13px var(--f-ui); }
 .settings-sub[hidden] { display: none !important; }
 .hint { font-size: 11.5px; color: var(--muted); }
 .hint.eth { display: block; text-transform: none; letter-spacing: 0; font-weight: 500; margin-top: 2px; }
 .clear-confirm { border: 1px solid var(--warn); border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
 .clear-confirm p { margin: 0; font-size: 12.5px; line-height: 1.45; color: var(--fg); }
 .btn.toggle[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+.lic-overlay { position: absolute; inset: 0; z-index: 30; display: grid; place-items: center; background: rgba(0, 0, 0, .6); }
+.lic-card { width: 540px; max-width: 94%; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px;
+  display: flex; flex-direction: column; gap: 10px; box-shadow: 0 10px 30px rgba(0, 0, 0, .5); }
+.lic-card h2 { margin: 0; font-family: var(--f-num); font-size: 20px; }
+.lic-info { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+.lic-info b { color: var(--fg); }
+#licToken { width: 100%; resize: none; border-radius: 8px; border: 1px solid var(--line); background: var(--panel-2); color: var(--fg);
+  font: 11px/1.4 ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; padding: 8px; }
 .btn.small { height: 30px; padding: 0 10px; font-size: 12px; }
 .chip.theme { cursor: pointer; color: var(--fg); }
 .chip.theme { padding: 0 9px; }
@@ -360,19 +371,16 @@ td.v { font-family: var(--f-num); font-size: 15px; font-weight: 600; text-align:
             <h2>Ajustes</h2>
             <div class="settings">
               <span class="label">Carro</span>
-              <div class="seg" role="group" aria-label="Carro" id="carSeg">
-                <button type="button" data-car="pajero" aria-pressed="true">Pajero 3.2 DI-D</button>
-                <button type="button" data-car="polo" aria-pressed="false">Polo 1.6 flex</button>
-              </div>
+              <select id="carSel" aria-label="Carro"></select>
               <div class="settings-sub" id="fuelRow" hidden>
-                <span class="label">No tanque<span class="hint eth" id="ethHint"></span></span>
+                <span class="label" id="fuelLbl">No tanque<span class="hint eth" id="ethHint"></span></span>
                 <div class="seg" role="group" aria-label="Combustível no tanque" id="fuelSeg">
                   <button type="button" data-fuel="0.3" aria-pressed="true">Gasolina</button>
                   <button type="button" data-fuel="0.6" aria-pressed="false">Mistura</button>
                   <button type="button" data-fuel="1" aria-pressed="false">Etanol</button>
                 </div>
-                <span class="label">Marchas</span>
-                <div class="row"><button class="btn" id="btnGearCal" type="button">Calibrar marchas</button><span class="hint">em 5ª, acima de 40 km/h</span></div>
+                <span class="label" id="gearLbl">Marchas</span>
+                <div class="row" id="gearRow"><button class="btn" id="btnGearCal" type="button">Calibrar marchas</button><span class="hint">em 5ª, acima de 40 km/h</span></div>
               </div>
               <span class="label">Tema</span>
               <div class="row">
@@ -398,11 +406,24 @@ td.v { font-family: var(--f-num); font-size: 15px; font-weight: 600; text-align:
               <button class="btn" id="btnStop" type="button">Desconectar</button>
             </div>
             <p id="bleHelp">Bluetooth <b>e localização</b> ligados no celular, motor ligado. Na lista, escolha o aparelho com “Vlink”, “iCar” ou “OBD” no nome.</p>
-            <div class="row" style="justify-content:space-between"><span class="label">Registro</span><button class="btn small" id="btnCopy" type="button">Copiar registro</button></div>
+            <div class="row" style="justify-content:space-between"><span class="label">Registro</span><div class="row"><button class="btn small" id="btnLic" type="button">Licença</button><button class="btn small" id="btnCopy" type="button">Copiar registro</button></div></div>
             <div class="log" id="log" tabindex="0"></div>
           </div>
         </div>
       </main>
+      <div class="lic-overlay" id="licPanel" hidden>
+        <div class="lic-card" role="dialog" aria-labelledby="licTitle">
+          <h2 id="licTitle">Licença</h2>
+          <div class="status-line" id="licStatus"></div>
+          <div class="lic-info" id="licInfo"></div>
+          <textarea id="licToken" rows="4" spellcheck="false" placeholder="Cole aqui o código da licença (começa com BORDO1.)"></textarea>
+          <div class="row">
+            <button class="btn primary" id="licAtivar" type="button">Ativar</button>
+            <button class="btn" id="licRemover" type="button">Remover</button>
+            <button class="btn" id="licFechar" type="button">Fechar</button>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="rotate" id="rotate" hidden>Gire o celular para a horizontal</div>
   </div>
@@ -434,86 +455,32 @@ function log(msg) {
   el.scrollTop = el.scrollHeight;
 }
 
-/* ---------- definição dos parâmetros ----------
-   origem: "obd" = OBD-II padrão, "fab" = dado de fábrica Mitsubishi (a descobrir), "calc" = calculado.
-   Para os de fábrica, preencha ecu/svc/pid/f quando a descoberta confirmar (docs/03). */
-const u16 = (a, b) => a * 256 + b;
-const PIDS = {
-  rpm:     { n: "Rotação",                 u: "rpm",  o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x0C, p: "fast",   f: (d) => u16(d[0], d[1]) / 4 },
-  speed:   { n: "Velocidade",              u: "km/h", o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x0D, p: "fast",   f: (d) => d[0] },
-  map:     { n: "Pressão no coletor",      u: "kPa",  o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x0B, p: "fast",   f: (d) => d[0] },
-  rail:    { n: "Pressão do common rail",  u: "MPa",  o: "obd", cars: ["pajero"], ecu: 0x7E0, svc: 0x01, pid: 0x23, p: "fast",   f: (d) => u16(d[0], d[1]) * 10 / 1000 },
-  pedal:   { n: "Pedal do acelerador",     u: "%",    o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x49, p: "fast",   f: (d) => d[0] * 100 / 255 },
-  load:    { n: "Carga do motor",          u: "%",    o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x04, p: "fast",   f: (d) => d[0] * 100 / 255 },
-  maf:     { n: "Fluxo de ar (MAF)",       u: "g/s",  o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x10, p: "medium", f: (d) => u16(d[0], d[1]) / 100 },
-  coolant: { n: "Temp. do motor",          u: "°C",   o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x05, p: "medium", f: (d) => d[0] - 40 },
-  iat:     { n: "Temp. de admissão",       u: "°C",   o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x0F, p: "medium", f: (d) => d[0] - 40 },
-  egr:     { n: "EGR comandada",           u: "%",    o: "obd", cars: ["pajero"], ecu: 0x7E0, svc: 0x01, pid: 0x2C, p: "medium", f: (d) => d[0] * 100 / 255 },
-  ambient: { n: "Temp. externa",           u: "°C",   o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x46, p: "slow",   f: (d) => d[0] - 40 },
-  baro:    { n: "Pressão atmosférica",     u: "kPa",  o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x33, p: "slow",   f: (d) => d[0] },
-  volts:   { n: "Tensão no módulo",        u: "V",    o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x42, p: "slow",   f: (d) => u16(d[0], d[1]) / 1000 },
-  fuel:    { n: "Nível de combustível",    u: "%",    o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x2F, p: "slow",   f: (d) => d[0] * 100 / 255 },
-  fuelrate:{ n: "Consumo informado pela ECU", u: "L/h", o: "obd", ecu: 0x7E0, svc: 0x01, pid: 0x5E, p: "medium", f: (d) => u16(d[0], d[1]) / 20 },
-  inj:     { n: "Débito de injeção",       u: "mm³",  o: "fab", cars: ["pajero"] },
-  atf:     { n: "Temp. da caixa (ATF)",    u: "°C",   o: "fab", cars: ["pajero"] },
-  gear:    { n: "Marcha",                  u: "",     o: "fab", cars: ["pajero"] },
-  trac:    { n: "Modo da tração",          u: "",     o: "fab", cars: ["pajero"] },
-  boost:   { n: "Turbo",                   u: "bar",  o: "calc", cars: ["pajero"] },
-  // Polo 1.6 flex (motor a gasolina/etanol aspirado)
-  throttle:{ n: "Borboleta",               u: "%",    o: "obd", cars: ["polo"], ecu: 0x7E0, svc: 0x01, pid: 0x11, p: "fast",   f: (d) => d[0] * 100 / 255 },
-  advance: { n: "Avanço de ignição",       u: "°",    o: "obd", cars: ["polo"], ecu: 0x7E0, svc: 0x01, pid: 0x0E, p: "fast",   f: (d) => d[0] / 2 - 64 },
-  stft:    { n: "Correção curta (banco 1)", u: "%",   o: "obd", cars: ["polo"], ecu: 0x7E0, svc: 0x01, pid: 0x06, p: "medium", f: (d) => d[0] * 100 / 128 - 100 },
-  ltft:    { n: "Correção longa (banco 1)", u: "%",   o: "obd", cars: ["polo"], ecu: 0x7E0, svc: 0x01, pid: 0x07, p: "slow",   f: (d) => d[0] * 100 / 128 - 100 },
-  cat:     { n: "Temp. do catalisador",    u: "°C",   o: "obd", cars: ["polo"], ecu: 0x7E0, svc: 0x01, pid: 0x3C, p: "slow",   f: (d) => u16(d[0], d[1]) / 10 - 40 },
-  ethanol: { n: "Etanol no combustível",   u: "%",    o: "obd", cars: ["polo"], ecu: 0x7E0, svc: 0x01, pid: 0x52, p: "slow",   f: (d) => d[0] * 100 / 255 },
-  trim:    { n: "Correção total de combustível", u: "%", o: "calc", cars: ["polo"] },
-  mgear:   { n: "Marcha (calculada)",      u: "",     o: "calc", cars: ["polo"] },
-  lph:     { n: "Consumo instantâneo",     u: "L/h",  o: "calc" },
-  kml:     { n: "Consumo instantâneo",     u: "km/L", o: "calc" },
-};
+/* ---------- perfis de veículo ----------
+   Cada carro é um arquivo em veiculos/*.yaml. O web/build.py lê esses arquivos e grava o pacote
+   abaixo (dados, fórmulas, telas, alertas). Não edite o pacote à mão: edite o perfil e rode o build.
+   origem dos dados: "obd" = OBD-II padrão, "fab" = dado de fábrica (sem fórmula = a descobrir), "calc" = calculado. */
+const VEIC = /*<VEICULOS>*/{"versao":"202611280200","exigirLicenca":false,"chavePublica":null,"veiculos":[{"id": "pajero-4m41", "label": "Pajero 3.2 DI-D", "name": "<b>Pajero 3.2 DI-D</b> · 4M41", "protocol": "ATSP6", "gauge": {"max": 4500, "red": 4000}, "bar": {"key": "boost", "label": "Turbo", "unit": "bar", "min": -0.5, "max": 1.5, "ticks": [-0.5, 0, 0.5, 1, 1.5], "dec": 1, "signed": true}, "therms": ["coolant", "atf", "iat"], "thermDefs": {"coolant": {"title": "Motor", "min": 40, "max": 120, "hot": 105, "tipo": "motor"}, "atf": {"title": "Caixa", "min": 40, "max": 120, "hot": 110, "tipo": "caixa"}, "iat": {"title": "Admissão", "min": 0, "max": 80, "hot": 65, "tipo": "admissao"}}, "fuelLabel": "Diesel", "t1": {"key": "rail", "label": "Rail", "unit": "MPa", "dec": 0, "icon": false}, "t2": {"key": "gear", "label": "Marcha", "unit": "AUTO", "dec": 0, "icon": false}, "t3": {"key": "trac", "label": "Tração", "unit": "", "dec": 0, "icon": true}, "tripBar": "Turbo máximo", "hot2": "atf", "tripHot2": "Caixa mais quente", "consumo": "diesel_injecao", "combustivel": "diesel", "cilindrada": 0.0032, "ve": 0.85, "cambio": {"tipo": "automatico", "relacoes": null, "k": null}, "simulacao": "diesel", "arcos": [{"name": "Motor", "g": [{"k": "coolant", "n": "Temp. motor", "u": "°C", "min": 40, "max": 120, "step": 20, "warn": 100, "hot": 110}, {"k": "boost", "n": "Turbo", "u": "bar", "min": -0.5, "max": 1.5, "step": 0.5, "warn": 1.3, "hot": 1.45, "dec": 1}, {"k": "rail", "n": "Pressão rail", "u": "MPa", "min": 0, "max": 180, "step": 30, "warn": 165, "hot": 175}, {"k": "iat", "n": "Temp. admissão", "u": "°C", "min": 0, "max": 80, "step": 20, "warn": 55, "hot": 65}, {"k": "load", "n": "Carga", "u": "%", "min": 0, "max": 100, "step": 25}, {"k": "rpm", "n": "Rotação", "u": "rpm", "min": 0, "max": 5000, "step": 1000, "warn": 3800, "hot": 4000, "lab": 1000}]}, {"name": "Câmbio e consumo", "g": [{"k": "atf", "n": "Temp. caixa", "u": "°C", "min": 40, "max": 130, "step": 30, "warn": 105, "hot": 115}, {"k": "gear", "n": "Marcha", "u": "", "type": "text", "sub": "AUTOMÁTICO"}, {"k": "trac", "n": "Tração", "u": "", "type": "split"}, {"k": "kml", "n": "Consumo", "u": "km/L", "min": 0, "max": 20, "step": 5, "dec": 1}, {"k": "avg", "n": "Média viagem", "u": "km/L", "min": 0, "max": 20, "step": 5, "dec": 1}, {"k": "fuel", "n": "Diesel", "u": "%", "min": 0, "max": 100, "step": 25, "low": 15}]}, {"name": "Elétrica e ar", "g": [{"k": "volts", "n": "Bateria", "u": "V", "min": 10, "max": 16, "step": 1, "warn": 15, "hot": 15.5, "low": 12, "dec": 1}, {"k": "maf", "n": "Fluxo de ar", "u": "g/s", "min": 0, "max": 200, "step": 50}, {"k": "egr", "n": "EGR", "u": "%", "min": 0, "max": 100, "step": 25}, {"k": "pedal", "n": "Acelerador", "u": "%", "min": 0, "max": 100, "step": 25}, {"k": "baro", "n": "Pressão atm.", "u": "kPa", "min": 60, "max": 110, "step": 10}, {"k": "ambient", "n": "Temp. externa", "u": "°C", "min": -10, "max": 50, "step": 10, "warn": 40, "hot": 45}]}],"pids":{"rpm":{"n": "Rotação", "u": "rpm", "o": "obd", "ecu": 2016, "svc": 1, "pid": 12, "req": [1, 12], "p": "fast","f":(d)=>((d[0]*256+d[1])/4)},"speed":{"n": "Velocidade", "u": "km/h", "o": "obd", "ecu": 2016, "svc": 1, "pid": 13, "req": [1, 13], "p": "fast","f":(d)=>d[0]},"map":{"n": "Pressão no coletor", "u": "kPa", "o": "obd", "ecu": 2016, "svc": 1, "pid": 11, "req": [1, 11], "p": "fast","f":(d)=>d[0]},"rail":{"n": "Pressão do common rail", "u": "MPa", "o": "obd", "ecu": 2016, "svc": 1, "pid": 35, "req": [1, 35], "p": "fast","f":(d)=>(((d[0]*256+d[1])*10)/1000)},"pedal":{"n": "Pedal do acelerador", "u": "%", "o": "obd", "ecu": 2016, "svc": 1, "pid": 73, "req": [1, 73], "p": "fast","f":(d)=>((d[0]*100)/255)},"load":{"n": "Carga do motor", "u": "%", "o": "obd", "ecu": 2016, "svc": 1, "pid": 4, "req": [1, 4], "p": "fast","f":(d)=>((d[0]*100)/255)},"maf":{"n": "Fluxo de ar (MAF)", "u": "g/s", "o": "obd", "ecu": 2016, "svc": 1, "pid": 16, "req": [1, 16], "p": "medium","f":(d)=>((d[0]*256+d[1])/100)},"coolant":{"n": "Temp. do motor", "u": "°C", "o": "obd", "ecu": 2016, "svc": 1, "pid": 5, "req": [1, 5], "p": "medium","f":(d)=>(d[0]-40)},"iat":{"n": "Temp. de admissão", "u": "°C", "o": "obd", "ecu": 2016, "svc": 1, "pid": 15, "req": [1, 15], "p": "medium","f":(d)=>(d[0]-40)},"egr":{"n": "EGR comandada", "u": "%", "o": "obd", "ecu": 2016, "svc": 1, "pid": 44, "req": [1, 44], "p": "medium","f":(d)=>((d[0]*100)/255)},"ambient":{"n": "Temp. externa", "u": "°C", "o": "obd", "ecu": 2016, "svc": 1, "pid": 70, "req": [1, 70], "p": "slow","f":(d)=>(d[0]-40)},"baro":{"n": "Pressão atmosférica", "u": "kPa", "o": "obd", "ecu": 2016, "svc": 1, "pid": 51, "req": [1, 51], "p": "slow","f":(d)=>d[0]},"volts":{"n": "Tensão no módulo", "u": "V", "o": "obd", "ecu": 2016, "svc": 1, "pid": 66, "req": [1, 66], "p": "slow","f":(d)=>((d[0]*256+d[1])/1000)},"fuel":{"n": "Nível de combustível", "u": "%", "o": "obd", "ecu": 2016, "svc": 1, "pid": 47, "req": [1, 47], "p": "slow","f":(d)=>((d[0]*100)/255)},"fuelrate":{"n": "Consumo informado pela ECU", "u": "L/h", "o": "obd", "ecu": 2016, "svc": 1, "pid": 94, "req": [1, 94], "p": "medium","f":(d)=>((d[0]*256+d[1])/20)},"inj":{"n": "Débito de injeção", "u": "mm³", "o": "fab"},"atf":{"n": "Temp. da caixa (ATF)", "u": "°C", "o": "fab"},"gear":{"n": "Marcha", "u": "", "o": "fab"},"trac":{"n": "Modo da tração", "u": "", "o": "fab"},"boost":{"n": "Turbo", "u": "bar", "o": "calc"},"lph":{"n": "Consumo instantâneo", "u": "L/h", "o": "calc"},"kml":{"n": "Consumo instantâneo", "u": "km/L", "o": "calc"}}},{"id": "polo-1.6-flex", "label": "Polo Sedan 1.6", "name": "<b>Polo Sedan 1.6</b> · flex", "protocol": "ATSP0", "gauge": {"max": 7000, "red": 6250}, "bar": {"key": "map", "label": "Coletor", "unit": "kPa", "min": 20, "max": 105, "ticks": [20, 40, 60, 80, 100], "dec": 0, "signed": false}, "therms": ["coolant", "iat", "cat"], "thermDefs": {"coolant": {"title": "Motor", "min": 40, "max": 120, "hot": 105, "tipo": "motor"}, "iat": {"title": "Admissão", "min": 0, "max": 80, "hot": 65, "tipo": "admissao"}, "cat": {"title": "Catalisador", "min": 100, "max": 900, "hot": 800, "tipo": "catalisador"}}, "fuelLabel": "Tanque", "t1": {"key": "trim", "label": "Correção", "unit": "%", "dec": 1, "icon": false}, "t2": {"key": "mgear", "label": "Marcha", "unit": "MANUAL", "dec": 0, "icon": false}, "t3": {"key": "throttle", "label": "Borboleta", "unit": "%", "dec": 0, "icon": false}, "tripBar": "Coletor máximo", "hot2": "iat", "tripHot2": "Admissão mais quente", "consumo": "ar_admitido", "combustivel": "flex", "cilindrada": 0.001598, "ve": 0.85, "cambio": {"tipo": "manual", "relacoes": [3.455, 1.944, 1.286, 0.969, 0.8], "k": 40.6}, "simulacao": "flex", "arcos": [{"name": "Motor", "g": [{"k": "coolant", "n": "Temp. motor", "u": "°C", "min": 40, "max": 120, "step": 20, "warn": 100, "hot": 110}, {"k": "map", "n": "Coletor", "u": "kPa", "min": 20, "max": 110, "step": 15}, {"k": "advance", "n": "Avanço", "u": "°", "min": -10, "max": 50, "step": 10}, {"k": "iat", "n": "Temp. admissão", "u": "°C", "min": 0, "max": 80, "step": 20, "warn": 55, "hot": 65}, {"k": "load", "n": "Carga", "u": "%", "min": 0, "max": 100, "step": 25}, {"k": "rpm", "n": "Rotação", "u": "rpm", "min": 0, "max": 7000, "step": 1000, "warn": 6000, "hot": 6250, "lab": 1000}]}, {"name": "Marcha e consumo", "g": [{"k": "cat", "n": "Catalisador", "u": "°C", "min": 100, "max": 900, "step": 200, "warn": 750, "hot": 820}, {"k": "mgear", "n": "Marcha", "u": "", "type": "text", "sub": "MANUAL"}, {"k": "trim", "n": "Correção", "u": "%", "min": -25, "max": 25, "step": 10, "warn": 15, "hot": 20, "low": -15, "dec": 1}, {"k": "kml", "n": "Consumo", "u": "km/L", "min": 0, "max": 20, "step": 5, "dec": 1}, {"k": "avg", "n": "Média viagem", "u": "km/L", "min": 0, "max": 20, "step": 5, "dec": 1}, {"k": "fuel", "n": "Tanque", "u": "%", "min": 0, "max": 100, "step": 25, "low": 15}]}, {"name": "Elétrica e ar", "g": [{"k": "volts", "n": "Bateria", "u": "V", "min": 10, "max": 16, "step": 1, "warn": 15, "hot": 15.5, "low": 12, "dec": 1}, {"k": "throttle", "n": "Borboleta", "u": "%", "min": 0, "max": 100, "step": 25}, {"k": "stft", "n": "Correção curta", "u": "%", "min": -25, "max": 25, "step": 10, "dec": 1}, {"k": "ltft", "n": "Correção longa", "u": "%", "min": -25, "max": 25, "step": 10, "dec": 1}, {"k": "ethanol", "n": "Etanol no combustível", "u": "%", "min": 0, "max": 100, "step": 25}, {"k": "ambient", "n": "Temp. externa", "u": "°C", "min": -10, "max": 50, "step": 10, "warn": 40, "hot": 45}]}],"pids":{"rpm":{"n": "Rotação", "u": "rpm", "o": "obd", "ecu": 2016, "svc": 1, "pid": 12, "req": [1, 12], "p": "fast","f":(d)=>((d[0]*256+d[1])/4)},"speed":{"n": "Velocidade", "u": "km/h", "o": "obd", "ecu": 2016, "svc": 1, "pid": 13, "req": [1, 13], "p": "fast","f":(d)=>d[0]},"map":{"n": "Pressão no coletor", "u": "kPa", "o": "obd", "ecu": 2016, "svc": 1, "pid": 11, "req": [1, 11], "p": "fast","f":(d)=>d[0]},"pedal":{"n": "Pedal do acelerador", "u": "%", "o": "obd", "ecu": 2016, "svc": 1, "pid": 73, "req": [1, 73], "p": "fast","f":(d)=>((d[0]*100)/255)},"load":{"n": "Carga do motor", "u": "%", "o": "obd", "ecu": 2016, "svc": 1, "pid": 4, "req": [1, 4], "p": "fast","f":(d)=>((d[0]*100)/255)},"maf":{"n": "Fluxo de ar (MAF)", "u": "g/s", "o": "obd", "ecu": 2016, "svc": 1, "pid": 16, "req": [1, 16], "p": "medium","f":(d)=>((d[0]*256+d[1])/100)},"coolant":{"n": "Temp. do motor", "u": "°C", "o": "obd", "ecu": 2016, "svc": 1, "pid": 5, "req": [1, 5], "p": "medium","f":(d)=>(d[0]-40)},"iat":{"n": "Temp. de admissão", "u": "°C", "o": "obd", "ecu": 2016, "svc": 1, "pid": 15, "req": [1, 15], "p": "medium","f":(d)=>(d[0]-40)},"ambient":{"n": "Temp. externa", "u": "°C", "o": "obd", "ecu": 2016, "svc": 1, "pid": 70, "req": [1, 70], "p": "slow","f":(d)=>(d[0]-40)},"baro":{"n": "Pressão atmosférica", "u": "kPa", "o": "obd", "ecu": 2016, "svc": 1, "pid": 51, "req": [1, 51], "p": "slow","f":(d)=>d[0]},"volts":{"n": "Tensão no módulo", "u": "V", "o": "obd", "ecu": 2016, "svc": 1, "pid": 66, "req": [1, 66], "p": "slow","f":(d)=>((d[0]*256+d[1])/1000)},"fuel":{"n": "Nível de combustível", "u": "%", "o": "obd", "ecu": 2016, "svc": 1, "pid": 47, "req": [1, 47], "p": "slow","f":(d)=>((d[0]*100)/255)},"fuelrate":{"n": "Consumo informado pela ECU", "u": "L/h", "o": "obd", "ecu": 2016, "svc": 1, "pid": 94, "req": [1, 94], "p": "medium","f":(d)=>((d[0]*256+d[1])/20)},"throttle":{"n": "Borboleta", "u": "%", "o": "obd", "ecu": 2016, "svc": 1, "pid": 17, "req": [1, 17], "p": "fast","f":(d)=>((d[0]*100)/255)},"advance":{"n": "Avanço de ignição", "u": "°", "o": "obd", "ecu": 2016, "svc": 1, "pid": 14, "req": [1, 14], "p": "fast","f":(d)=>((d[0]/2)-64)},"stft":{"n": "Correção curta (banco 1)", "u": "%", "o": "obd", "ecu": 2016, "svc": 1, "pid": 6, "req": [1, 6], "p": "medium","f":(d)=>(((d[0]*100)/128)-100)},"ltft":{"n": "Correção longa (banco 1)", "u": "%", "o": "obd", "ecu": 2016, "svc": 1, "pid": 7, "req": [1, 7], "p": "slow","f":(d)=>(((d[0]*100)/128)-100)},"cat":{"n": "Temp. do catalisador", "u": "°C", "o": "obd", "ecu": 2016, "svc": 1, "pid": 60, "req": [1, 60], "p": "slow","f":(d)=>(((d[0]*256+d[1])/10)-40)},"ethanol":{"n": "Etanol no combustível", "u": "%", "o": "obd", "ecu": 2016, "svc": 1, "pid": 82, "req": [1, 82], "p": "slow","f":(d)=>((d[0]*100)/255)},"trim":{"n": "Correção total de combustível", "u": "%", "o": "calc"},"mgear":{"n": "Marcha (calculada)", "u": "", "o": "calc"},"lph":{"n": "Consumo instantâneo", "u": "L/h", "o": "calc"},"kml":{"n": "Consumo instantâneo", "u": "km/L", "o": "calc"}}},{"id": "generico", "label": "Genérico OBD-II", "name": "<b>Genérico OBD-II</b> · qualquer carro", "protocol": "ATSP0", "gauge": {"max": 8000, "red": 6500}, "bar": {"key": "map", "label": "Coletor", "unit": "kPa", "min": 0, "max": 250, "ticks": [0, 50, 100, 150, 200, 250], "dec": 0, "signed": false}, "therms": ["coolant", "iat", "oil_temp"], "thermDefs": {"coolant": {"title": "Motor", "min": 40, "max": 120, "hot": 105, "tipo": "motor"}, "iat": {"title": "Admissão", "min": 0, "max": 80, "hot": 65, "tipo": "admissao"}, "oil_temp": {"title": "Óleo", "min": 40, "max": 150, "hot": 130, "tipo": "oleo"}}, "fuelLabel": "Tanque", "t1": {"key": "trim", "label": "Correção", "unit": "%", "dec": 1, "icon": false}, "t2": {"key": "throttle", "label": "Borboleta", "unit": "%", "dec": 0, "icon": false}, "t3": {"key": "advance", "label": "Avanço", "unit": "°", "dec": 0, "icon": false}, "tripBar": "Coletor máximo", "hot2": "oil_temp", "tripHot2": "Óleo mais quente", "consumo": "ar_admitido", "combustivel": "gasolina", "cilindrada": null, "ve": 0.85, "cambio": {"tipo": "desconhecido", "relacoes": null, "k": null}, "simulacao": "flex", "arcos": [{"name": "Motor", "g": [{"k": "coolant", "n": "Temp. motor", "u": "°C", "min": 40, "max": 120, "step": 20, "warn": 100, "hot": 110}, {"k": "map", "n": "Coletor", "u": "kPa", "min": 0, "max": 250, "step": 50}, {"k": "oil_temp", "n": "Temp. óleo", "u": "°C", "min": 50, "max": 150, "step": 25, "warn": 120, "hot": 130}, {"k": "iat", "n": "Temp. admissão", "u": "°C", "min": 0, "max": 80, "step": 20, "warn": 55, "hot": 65}, {"k": "load", "n": "Carga", "u": "%", "min": 0, "max": 100, "step": 25}, {"k": "rpm", "n": "Rotação", "u": "rpm", "min": 0, "max": 8000, "step": 1000, "warn": 6000, "hot": 6500, "lab": 1000}]}, {"name": "Consumo e mistura", "g": [{"k": "kml", "n": "Consumo", "u": "km/L", "min": 0, "max": 20, "step": 5, "dec": 1}, {"k": "avg", "n": "Média viagem", "u": "km/L", "min": 0, "max": 20, "step": 5, "dec": 1}, {"k": "fuel", "n": "Tanque", "u": "%", "min": 0, "max": 100, "step": 25, "low": 15}, {"k": "trim", "n": "Correção", "u": "%", "min": -25, "max": 25, "step": 10, "warn": 15, "hot": 20, "low": -15, "dec": 1}, {"k": "throttle", "n": "Borboleta", "u": "%", "min": 0, "max": 100, "step": 25}, {"k": "advance", "n": "Avanço", "u": "°", "min": -10, "max": 50, "step": 10}]}, {"name": "Elétrica e ar", "g": [{"k": "volts", "n": "Bateria", "u": "V", "min": 10, "max": 16, "step": 1, "warn": 15, "hot": 15.5, "low": 12, "dec": 1}, {"k": "maf", "n": "Fluxo de ar", "u": "g/s", "min": 0, "max": 300, "step": 50}, {"k": "baro", "n": "Pressão atm.", "u": "kPa", "min": 60, "max": 110, "step": 10}, {"k": "ambient", "n": "Temp. externa", "u": "°C", "min": -10, "max": 50, "step": 10, "warn": 40, "hot": 45}, {"k": "cat", "n": "Catalisador", "u": "°C", "min": 100, "max": 900, "step": 200, "warn": 750, "hot": 820}, {"k": "ethanol", "n": "Etanol", "u": "%", "min": 0, "max": 100, "step": 25}]}],"pids":{"rpm":{"n": "Rotação", "u": "rpm", "o": "obd", "ecu": 2016, "svc": 1, "pid": 12, "req": [1, 12], "p": "fast","f":(d)=>((d[0]*256+d[1])/4)},"speed":{"n": "Velocidade", "u": "km/h", "o": "obd", "ecu": 2016, "svc": 1, "pid": 13, "req": [1, 13], "p": "fast","f":(d)=>d[0]},"map":{"n": "Pressão no coletor", "u": "kPa", "o": "obd", "ecu": 2016, "svc": 1, "pid": 11, "req": [1, 11], "p": "fast","f":(d)=>d[0]},"rail":{"n": "Pressão do common rail", "u": "MPa", "o": "obd", "ecu": 2016, "svc": 1, "pid": 35, "req": [1, 35], "p": "fast","f":(d)=>(((d[0]*256+d[1])*10)/1000)},"pedal":{"n": "Pedal do acelerador", "u": "%", "o": "obd", "ecu": 2016, "svc": 1, "pid": 73, "req": [1, 73], "p": "fast","f":(d)=>((d[0]*100)/255)},"load":{"n": "Carga do motor", "u": "%", "o": "obd", "ecu": 2016, "svc": 1, "pid": 4, "req": [1, 4], "p": "fast","f":(d)=>((d[0]*100)/255)},"throttle":{"n": "Borboleta", "u": "%", "o": "obd", "ecu": 2016, "svc": 1, "pid": 17, "req": [1, 17], "p": "fast","f":(d)=>((d[0]*100)/255)},"advance":{"n": "Avanço de ignição", "u": "°", "o": "obd", "ecu": 2016, "svc": 1, "pid": 14, "req": [1, 14], "p": "fast","f":(d)=>((d[0]/2)-64)},"maf":{"n": "Fluxo de ar (MAF)", "u": "g/s", "o": "obd", "ecu": 2016, "svc": 1, "pid": 16, "req": [1, 16], "p": "medium","f":(d)=>((d[0]*256+d[1])/100)},"coolant":{"n": "Temp. do motor", "u": "°C", "o": "obd", "ecu": 2016, "svc": 1, "pid": 5, "req": [1, 5], "p": "medium","f":(d)=>(d[0]-40)},"iat":{"n": "Temp. de admissão", "u": "°C", "o": "obd", "ecu": 2016, "svc": 1, "pid": 15, "req": [1, 15], "p": "medium","f":(d)=>(d[0]-40)},"oil_temp":{"n": "Temp. do óleo do motor", "u": "°C", "o": "obd", "ecu": 2016, "svc": 1, "pid": 92, "req": [1, 92], "p": "medium","f":(d)=>(d[0]-40)},"egr":{"n": "EGR comandada", "u": "%", "o": "obd", "ecu": 2016, "svc": 1, "pid": 44, "req": [1, 44], "p": "medium","f":(d)=>((d[0]*100)/255)},"stft":{"n": "Correção curta (banco 1)", "u": "%", "o": "obd", "ecu": 2016, "svc": 1, "pid": 6, "req": [1, 6], "p": "medium","f":(d)=>(((d[0]*100)/128)-100)},"ltft":{"n": "Correção longa (banco 1)", "u": "%", "o": "obd", "ecu": 2016, "svc": 1, "pid": 7, "req": [1, 7], "p": "slow","f":(d)=>(((d[0]*100)/128)-100)},"fuelrate":{"n": "Consumo informado pela ECU", "u": "L/h", "o": "obd", "ecu": 2016, "svc": 1, "pid": 94, "req": [1, 94], "p": "medium","f":(d)=>((d[0]*256+d[1])/20)},"cat":{"n": "Temp. do catalisador", "u": "°C", "o": "obd", "ecu": 2016, "svc": 1, "pid": 60, "req": [1, 60], "p": "slow","f":(d)=>(((d[0]*256+d[1])/10)-40)},"ethanol":{"n": "Etanol no combustível", "u": "%", "o": "obd", "ecu": 2016, "svc": 1, "pid": 82, "req": [1, 82], "p": "slow","f":(d)=>((d[0]*100)/255)},"ambient":{"n": "Temp. externa", "u": "°C", "o": "obd", "ecu": 2016, "svc": 1, "pid": 70, "req": [1, 70], "p": "slow","f":(d)=>(d[0]-40)},"baro":{"n": "Pressão atmosférica", "u": "kPa", "o": "obd", "ecu": 2016, "svc": 1, "pid": 51, "req": [1, 51], "p": "slow","f":(d)=>d[0]},"volts":{"n": "Tensão no módulo", "u": "V", "o": "obd", "ecu": 2016, "svc": 1, "pid": 66, "req": [1, 66], "p": "slow","f":(d)=>((d[0]*256+d[1])/1000)},"fuel":{"n": "Nível de combustível", "u": "%", "o": "obd", "ecu": 2016, "svc": 1, "pid": 47, "req": [1, 47], "p": "slow","f":(d)=>((d[0]*100)/255)},"run_time":{"n": "Tempo desde a partida", "u": "s", "o": "obd", "ecu": 2016, "svc": 1, "pid": 31, "req": [1, 31], "p": "slow","f":(d)=>(d[0]*256+d[1])},"dist_mil":{"n": "Distância com luz de injeção", "u": "km", "o": "obd", "ecu": 2016, "svc": 1, "pid": 33, "req": [1, 33], "p": "slow","f":(d)=>(d[0]*256+d[1])},"trim":{"n": "Correção total de combustível", "u": "%", "o": "calc"},"lph":{"n": "Consumo instantâneo", "u": "L/h", "o": "calc"},"kml":{"n": "Consumo instantâneo", "u": "km/L", "o": "calc"}}}]}/*</VEICULOS>*/;
 const EVERY = { fast: 1, medium: 4, slow: 20 };
-
-/* ---------- perfis de carro ---------- */
-const PROFILES = {
-  pajero: {
-    name: "<b>Pajero 3.2 DI-D</b> · 4M41", protocol: "ATSP6", gauge: { max: 4500, red: 4000 },
-    bar: { key: "boost", label: "Turbo", unit: "bar", min: -0.5, max: 1.5, ticks: [-0.5, 0, 0.5, 1, 1.5], dec: 1, signed: true },
-    therms: ["coolant", "atf", "iat"], fuelLabel: "Diesel", hot2: "atf",
-    t1: { key: "rail", label: "Rail", unit: "MPa", dec: 0 },
-    t2: { key: "gear", label: "Marcha", unit: "AUTO", dec: 0 },
-    t3: { key: "trac", label: "Tração", icon: true },
-    tripBar: "Turbo máximo", tripHot2: "Caixa mais quente",
-  },
-  polo: {
-    name: "<b>Polo Sedan 1.6</b> · flex", protocol: "ATSP0", gauge: { max: 7000, red: 6250 },
-    bar: { key: "map", label: "Coletor", unit: "kPa", min: 20, max: 105, ticks: [20, 40, 60, 80, 100], dec: 0, signed: false },
-    therms: ["coolant", "iat", "cat"], fuelLabel: "Tanque", hot2: "iat",
-    t1: { key: "trim", label: "Correção", unit: "%", dec: 1 },
-    t2: { key: "mgear", label: "Marcha", unit: "MANUAL", dec: 0 },
-    t3: { key: "throttle", label: "Borboleta", unit: "%", dec: 0 },
-    tripBar: "Coletor máximo", tripHot2: "Admissão mais quente",
-  },
-};
-let car = store.get("car", "pajero");
-if (!PROFILES[car]) car = "pajero";
+const PROFILES = Object.fromEntries(VEIC.veiculos.map((v) => [v.id, v]));
+const CAR_ALIASES = { pajero: "pajero-4m41", polo: "polo-1.6-flex" };   // nomes antigos guardados no celular
+let car = CAR_ALIASES[store.get("car", "")] || store.get("car", VEIC.veiculos[0].id);
+if (!PROFILES[car]) car = VEIC.veiculos[0].id;
 let PROF = PROFILES[car];
+let PIDS = PROF.pids;
 // Fração de etanol no tanque. Gasolina comum no Brasil = E30 (30% de etanol desde ago/2025).
 let fuelMix = parseFloat(store.get("fuelMix", "0.3")) || 0.3;
 if (fuelMix === 0.27) { fuelMix = 0.3; store.set("fuelMix", "0.3"); }   // escolha antiga (E27)
-const forCar = (p) => !p.cars || p.cars.includes(car);
-const VE = 0.85;          // eficiência volumétrica média do 1.6 8V (calibrar com o consumo por tanque)
-const DISPLACEMENT = 0.001598; // m³
-// Marcha do câmbio manual: rotação ÷ velocidade comparada às relações do câmbio.
-// Relações típicas do câmbio de 5 marchas do Polo 1.6; POLO_K = rpm por km/h para relação 1,0
-// (diferencial ~4,53 e pneu 185/60 R15). Valores aproximados: o botão "Calibrar marchas" corrige.
-const POLO_GEARS = [3.455, 1.944, 1.286, 0.969, 0.8], POLO_K = 40.6;
-let gearScale = parseFloat(store.get("gearScale", "1")) || 1;
+// Marcha do câmbio manual: rotação ÷ velocidade comparada às relações do câmbio do perfil
+// (rpm_por_kmh = rpm por km/h com relação 1,0). O botão "Calibrar marchas" corrige pneu e diferencial.
+const DEFAULT_GEARS = [3.5, 2.0, 1.3, 1.0, 0.8], DEFAULT_K = 40;
+const gears = () => PROF.cambio.relacoes || DEFAULT_GEARS, gearK = () => PROF.cambio.k || DEFAULT_K;
+let gearScale = 1;
 const gearState = { cand: null, n: 0, shown: null };
 function calcGear(rpm, speed) {
   if (rpm == null || speed == null || speed < 5 || rpm < 600) return null;
-  const k = rpm / speed / (POLO_K * gearScale);
+  const k = rpm / speed / (gearK() * gearScale);
   let best = null, err = 1;
-  POLO_GEARS.forEach((r, i) => { const e = Math.abs(Math.log(k / r)); if (e < err) { err = e; best = i + 1; } });
+  gears().forEach((r, i) => { const e = Math.abs(Math.log(k / r)); if (e < err) { err = e; best = i + 1; } });
   return err < 0.1 ? best : null;   // fora de 10%: embreagem pisada ou ponto morto
 }
 
@@ -524,7 +491,7 @@ function resetTrip() { Object.assign(trip, { km: 0, secs: 0, fuel: 0, max: 0, bo
 
 function deriveAndTrip(now) {
   const v = S.values;
-  if (car === "pajero") {
+  if (PROF.consumo === "diesel_injecao") {
     if (v.map != null) v.boost = (v.map - (v.baro ?? 101.3)) / 100;
     // Consumo: da ECU (PID 5E) ou do débito de injeção (mm³ por injeção × 2 injeções por volta no 4 cilindros).
     // Pelo fluxo de ar (MAF) não calculamos: no diesel a mistura varia demais e o número sairia errado.
@@ -532,18 +499,18 @@ function deriveAndTrip(now) {
   } else {
     // Flex aspirado: a mistura fica perto da estequiométrica, então o ar diz quanto combustível entra.
     v.trim = v.stft != null || v.ltft != null ? (v.stft ?? 0) + (v.ltft ?? 0) : null;
-    const g = calcGear(v.rpm, v.speed);           // só troca depois de 3 leituras iguais (sem piscar)
+    const g = PROF.cambio.tipo === "manual" ? calcGear(v.rpm, v.speed) : null;   // troca depois de 3 leituras iguais
     if (g === gearState.cand) gearState.n++; else { gearState.cand = g; gearState.n = 1; }
     if (gearState.n >= 3) gearState.shown = g;
     v.mgear = gearState.shown;
     let air = v.maf ?? null;                               // g/s
-    if (air == null && v.map != null && v.rpm != null) {   // sem MAF: densidade do ar × cilindrada × rotação
+    if (air == null && v.map != null && v.rpm != null && PROF.cilindrada) {   // sem MAF: densidade do ar × cilindrada × rotação
       const T = (v.iat ?? 30) + 273.15;
-      air = (v.map * 1000 * DISPLACEMENT * (v.rpm / 120) * VE) / (287.05 * T) * 1000;
+      air = (v.map * 1000 * PROF.cilindrada * (v.rpm / 120) * PROF.ve) / (287.05 * T) * 1000;
     }
-    const e = v.ethanol != null ? v.ethanol / 100 : fuelMix;
+    const e = v.ethanol != null ? v.ethanol / 100 : PROF.combustivel === "flex" ? fuelMix : PROF.combustivel === "etanol" ? 1 : 0.3;
     const afr = 14.7 - 6.0 * e, dens = 0.745 + 0.064 * e;  // ar/combustível e kg/L da mistura
-    v.lph = v.fuelrate ?? (air != null && (v.rpm ?? 0) > 300 ? (air / afr) * (1 + (v.trim ?? 0) / 100) * 3600 / (dens * 1000) : null);
+    v.lph = v.fuelrate ?? (PROF.consumo === "ar_admitido" && air != null && (v.rpm ?? 0) > 300 ? (air / afr) * (1 + (v.trim ?? 0) / 100) * 3600 / (dens * 1000) : null);
   }
   v.kml = v.lph != null && (v.speed || 0) > 3 && v.lph > 0.05 ? v.speed / v.lph : null;
   if (trip.last != null) {
@@ -562,18 +529,19 @@ let simTimer = null, simT0 = 0;
 function startSim() {
   stopAll();
   S.source = "sim"; S.values = {}; resetTrip(); simT0 = performance.now();
-  S.dtcs = car === "pajero" ? ["P0401"] : []; S.dtcSim = car === "pajero";
+  S.dtcs = PROF.simulacao === "diesel" ? ["P0401"] : []; S.dtcSim = PROF.simulacao === "diesel";
   simTimer = setInterval(() => {
     const t = (performance.now() - simT0) / 1000;
     const a = (Math.sin(t / 5) + 1) / 2;                    // acelerador 0..1
-    if (car === "polo") {
+    if (PROF.simulacao !== "diesel") {
       const speed = clamp(10 + a * 95 + Math.sin(t / 1.7) * 3, 0, 170);
       const g = speed < 20 ? 1 : speed < 40 ? 2 : speed < 60 ? 3 : speed < 85 ? 4 : 5;
-      const rpm = clamp(speed * POLO_GEARS[g - 1] * POLO_K * (1 + Math.sin(t * 3) * 0.01), 850, 6200);
+      const rpm = clamp(speed * gears()[g - 1] * gearK() * (1 + Math.sin(t * 3) * 0.01), 850, 6200);
       Object.assign(S.values, {
         rpm, speed, map: 30 + a * 68, baro: 94, throttle: 8 + a * 80, load: 18 + a * 72,
         coolant: Math.min(92, 50 + t * 1.6), iat: 34 + a * 6, cat: Math.min(720, 380 + t * 8 + a * 120),
         stft: Math.sin(t / 2.3) * 3, ltft: 2.3, advance: 12 + (1 - a) * 18, volts: 14.2, fuel: 48, ambient: 24, ethanol: fuelMix * 100,
+        oil_temp: Math.min(105, 50 + t * 1.2), maf: 4 + a * 60, pedal: a * 100,
       });
       deriveAndTrip(performance.now());
       return;
@@ -714,6 +682,61 @@ function parseLines(text) {
   return out;
 }
 
+// Chassi (VIN) pelo serviço 09 02. Em K-line chega em várias linhas de 4 letras.
+async function readVin() {
+  try {
+    const r = await elm.request(0x7DF, [0x09, 0x02]);
+    const msgs = r.filter((m) => m.data[0] === 0x49 && m.data[1] === 0x02);
+    if (!msgs.length) return null;
+    const bytes = elm.kline ? msgs.sort((a, b) => a.data[2] - b.data[2]).flatMap((m) => m.data.slice(3)) : msgs[0].data.slice(3);
+    const vin = String.fromCharCode(...bytes).replace(/[^A-HJ-NPR-Z0-9]/gi, "").toUpperCase();
+    return vin.length >= 17 ? vin.slice(-17) : null;
+  } catch { return null; }
+}
+
+/* ---------- licença (versão comercial) ----------
+   Código BORDO1.<dados>.<assinatura ECDSA P-256>. O app tem só a chave PÚBLICA: confere, não cria.
+   Com exigirLicenca, o carro só é lido se o perfil estiver na licença e o chassi bater. A simulação é livre. */
+const LIC = { token: store.get("licenca", ""), dados: null, erro: "" };
+const b64u = (s) => Uint8Array.from(atob(s.replace(/-/g, "+").replace(/_/g, "/") + "=".repeat((4 - (s.length % 4)) % 4)), (c) => c.charCodeAt(0));
+async function verificarLicenca(token) {
+  token = (token || "").trim();
+  if (!token) return { dados: null, erro: "" };
+  try {
+    if (!VEIC.chavePublica) return { dados: null, erro: "esta versão não tem chave de licença" };
+    const [pre, corpo, sig] = token.split(".");
+    if (pre !== "BORDO1" || !corpo || !sig) return { dados: null, erro: "formato desconhecido" };
+    const chave = await crypto.subtle.importKey("jwk", { ...VEIC.chavePublica, ext: true }, { name: "ECDSA", namedCurve: "P-256" }, false, ["verify"]);
+    const ok = await crypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, chave, b64u(sig), new TextEncoder().encode(pre + "." + corpo));
+    if (!ok) return { dados: null, erro: "assinatura não confere (código alterado ou de outro fornecedor)" };
+    const dados = JSON.parse(new TextDecoder().decode(b64u(corpo)));
+    if (dados.validade && new Date().toISOString().slice(0, 10) > dados.validade) return { dados, erro: `licença vencida em ${dados.validade}` };
+    return { dados, erro: "" };
+  } catch (e) { return { dados: null, erro: "não foi possível conferir: " + e.message }; }
+}
+function licencaPermite(id, vin) {
+  if (!VEIC.exigirLicenca) return { ok: true };
+  if (!LIC.dados || LIC.erro) return { ok: false, motivo: LIC.erro ? `Licença inválida: ${LIC.erro}.` : "Esta versão precisa de licença para ler o carro. Toque em Licença e cole o código." };
+  if (!LIC.dados.veiculos.includes("*") && !LIC.dados.veiculos.includes(id)) return { ok: false, motivo: `A licença não inclui o perfil ${PROFILES[id].label}.` };
+  if (LIC.dados.vin) {
+    if (!vin) return { ok: false, motivo: "Não foi possível ler o chassi do carro para conferir a licença." };
+    if (vin !== LIC.dados.vin) return { ok: false, motivo: "O chassi deste carro não é o da licença." };
+  }
+  return { ok: true };
+}
+function licUi() {
+  const d = LIC.dados;
+  $("licStatus").textContent = !VEIC.exigirLicenca ? "Esta versão não exige licença (versão do proprietário)."
+    : LIC.erro ? `Licença inválida: ${LIC.erro}.` : d ? "Licença ativa." : "Nenhuma licença ativa. A simulação funciona; para ler o carro, cole o código.";
+  $("licStatus").style.color = !VEIC.exigirLicenca || (d && !LIC.erro) ? "var(--ok)" : "var(--warn)";
+  $("licInfo").innerHTML = d ? `Cliente: <b>${d.cliente}</b> · Perfis: <b>${d.veiculos.includes("*") ? "todos" : d.veiculos.map((x) => PROFILES[x]?.label || x).join(", ")}</b><br>`
+    + `Chassi: <b>${d.vin || "qualquer"}</b> · Validade: <b>${d.validade ? d.validade.split("-").reverse().join("/") : "sem vencimento"}</b> · Código nº ${d.id}` : "";
+}
+async function carregarLicenca(token) {
+  Object.assign(LIC, { token }, await verificarLicenca(token));
+  licUi();
+}
+
 function decodeDtc(hi, lo) {
   return "PCBU"[hi >> 6] + ((hi >> 4) & 3) + (hi & 15).toString(16).toUpperCase() + (lo >> 4).toString(16).toUpperCase() + (lo & 15).toString(16).toUpperCase();
 }
@@ -732,6 +755,16 @@ async function startBle() {
     $("connStatus").textContent = "Escolha o adaptador na lista do Chrome…";
     await elm.connect();
     await elm.init();
+    const vin = await readVin();
+    log(`Chassi (VIN): ${vin || "a ECU não informou"}`);
+    const lic = licencaPermite(car, vin);
+    if (!lic.ok) {
+      log("Leitura bloqueada: " + lic.motivo);
+      setConn("bad", "Sem licença");
+      $("connStatus").textContent = lic.motivo;
+      elm.disconnect();
+      return;
+    }
     S.source = "ble"; S.values = {}; S.dtcs = []; S.dtcSim = false; resetTrip();
     setConn("ok", "Conectado");
     $("connStatus").textContent = `Conectado a ${elm.device.name || "adaptador"}. Lendo o carro…`;
@@ -782,7 +815,7 @@ async function readDtcs() {
 async function pollLoop() {
   polling = true;
   const sup = await supportedPids(0x7E0);
-  const active = Object.entries(PIDS).filter(([, p]) => p.svc && forCar(p) && (!sup.size || p.svc !== 0x01 || sup.has(p.pid)));
+  const active = Object.entries(PIDS).filter(([, p]) => p.req && (!sup.size || p.svc !== 0x01 || sup.has(p.pid)));
   log(`PIDs suportados pela ECU do motor: ${[...sup].filter((x) => x % 32).map((x) => x.toString(16).padStart(2, "0").toUpperCase()).join(" ") || "nenhum informado"}`);
   log(`Lendo: ${active.map(([k]) => k).join(", ")}`);
   let cycle = 0, silent = 0, lastDtc = 0;
@@ -792,9 +825,9 @@ async function pollLoop() {
       if (!polling) break;
       if (cycle % EVERY[p.p]) continue;
       try {
-        const r = await elm.request(p.ecu, [p.svc, p.pid]);
-        const d = r.find((m) => m.data[0] === p.svc + 0x40 && m.data[1] === p.pid)?.data;
-        if (d) { S.values[key] = p.f(d.slice(2)); ok++; }
+        const r = await elm.request(p.ecu, p.req);
+        const d = r.find((m) => m.data[0] === p.req[0] + 0x40 && p.req.slice(1).every((x, i) => m.data[1 + i] === x))?.data;
+        if (d) { S.values[key] = p.f(d.slice(p.req.length)); ok++; }
       } catch (e) { /* um PID falhar não para o painel */ }
     }
     deriveAndTrip(performance.now());
@@ -858,13 +891,17 @@ function buildGauge() {
 }
 
 /* ---------- tela: termômetros ---------- */
-const THERMS = {
-  coolant: { title: "Motor", min: 40, max: 120, hot: 105, color: "var(--cold)", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3v11"/><circle cx="12" cy="17" r="3"/><path d="M15 6h3M15 9h2M3 21c2-1.3 4-1.3 6 0s4 1.3 6 0 4-1.3 6 0"/></svg>' },
-  atf:     { title: "Caixa",  min: 40, max: 120, hot: 110, color: "#9B7BEA", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>' },
-  cat:     { title: "Catalisador", min: 100, max: 900, hot: 800, color: "#E0884A", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="6" y="7" width="12" height="10" rx="2"/><path d="M2 12h4M18 12h4M9 10v4M12 10v4M15 10v4"/></svg>' },
-  iat:     { title: "Admissão", min: 0, max: 80, hot: 65, color: "var(--ok)", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 8h11a3 3 0 1 0-3-3M3 12h15a3 3 0 1 1-3 3M3 16h8"/></svg>' },
+const THERM_STYLE = {
+  motor:       { color: "var(--cold)", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3v11"/><circle cx="12" cy="17" r="3"/><path d="M15 6h3M15 9h2M3 21c2-1.3 4-1.3 6 0s4 1.3 6 0 4-1.3 6 0"/></svg>' },
+  caixa:       { color: "#9B7BEA", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>' },
+  catalisador: { color: "#E0884A", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="6" y="7" width="12" height="10" rx="2"/><path d="M2 12h4M18 12h4M9 10v4M12 10v4M15 10v4"/></svg>' },
+  admissao:    { color: "var(--ok)", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 8h11a3 3 0 1 0-3-3M3 12h15a3 3 0 1 1-3 3M3 16h8"/></svg>' },
+  oleo:        { color: "#D9B44A", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 5 6.5 5 9a5 5 0 0 1-10 0c0-2.5 2-5 5-9z"/></svg>' },
 };
-function buildTherms() { document.querySelectorAll(".g-temps .therm").forEach((el, i) => {
+let THERMS = {};
+function buildTherms() {
+  THERMS = Object.fromEntries(PROF.therms.map((k) => [k, { ...PROF.thermDefs[k], ...THERM_STYLE[PROF.thermDefs[k].tipo] }]));
+  document.querySelectorAll(".g-temps .therm").forEach((el, i) => {
   el.dataset.therm = PROF.therms[i];
   const k = el.dataset.therm, c = THERMS[k];
   const steps = 5, ticks = Array.from({ length: steps }, (_, i) => c.min + (i * (c.max - c.min)) / (steps - 1));
@@ -956,7 +993,7 @@ function render() {
   $("loadArc").setAttribute("stroke-opacity", load ? 1 : 0);
 
   $("ext").textContent = fmt(v.ambient);
-  if (car === "polo") $("ethHint").textContent = v.ethanol != null ? `ECU: ${fmt(v.ethanol)}%` : (S.source === "ble" ? "ECU não informa" : "");
+  if (PROF.combustivel === "flex") $("ethHint").textContent = v.ethanol != null ? `ECU: ${fmt(v.ethanol)}%` : (S.source === "ble" ? "ECU não informa" : "");
   $("volts").textContent = fmt(v.volts, 1);
 
   const dtc = $("chipDtc");
@@ -988,7 +1025,7 @@ function renderData() {
   if (performance.now() - lastData < 250) return;
   lastData = performance.now();
   const names = { obd: ["OBD padrão", ""], fab: ["fábrica · a descobrir", "fab"], calc: ["calculado", "calc"] };
-  $("dataRows").innerHTML = Object.entries(PIDS).filter(([, p]) => forCar(p)).map(([k, p]) => {
+  $("dataRows").innerHTML = Object.entries(PIDS).map(([k, p]) => {
     const val = S.values[k];
     const txt = val == null ? "—" : typeof val === "number" ? fmt(val, Math.abs(val) < 10 && !Number.isInteger(val) ? 2 : 0) : val;
     const [label, cls] = S.source === "sim" ? ["simulado", "fab"] : names[p.o];
@@ -1131,60 +1168,7 @@ new ResizeObserver(fit).observe($("fit"));
 if (!navigator.bluetooth) $("bleHelp").insertAdjacentHTML("afterbegin", "<b>Sem Bluetooth neste navegador</b> (iPhone e prévia). ");
 /* ---------- layout "Arcos 3D": seis mostradores por tela, três telas por carro ---------- */
 const Arcs = (() => {
-  const VIEWS = {
-    pajero: [
-      { name: "Motor", g: [
-        { k: "coolant", n: "Temp. motor", u: "°C", min: 40, max: 120, step: 20, warn: 100, hot: 110 },
-        { k: "boost", n: "Turbo", u: "bar", min: -0.5, max: 1.5, step: 0.5, warn: 1.3, hot: 1.45, dec: 1 },
-        { k: "rail", n: "Pressão rail", u: "MPa", min: 0, max: 180, step: 30, warn: 165, hot: 175 },
-        { k: "iat", n: "Temp. admissão", u: "°C", min: 0, max: 80, step: 20, warn: 55, hot: 65 },
-        { k: "load", n: "Carga", u: "%", min: 0, max: 100, step: 25 },
-        { k: "rpm", n: "Rotação", u: "rpm", min: 0, max: 4500, step: 1000, warn: 3800, hot: 4000, lab: 1000 },
-      ] },
-      { name: "Câmbio e consumo", g: [
-        { k: "atf", n: "Temp. caixa", u: "°C", min: 40, max: 130, step: 30, warn: 105, hot: 115 },
-        { type: "text", k: "gear", n: "Marcha", sub: "AUTOMÁTICO" },
-        { type: "split", k: "trac", n: "Tração" },
-        { k: "kml", n: "Consumo", u: "km/L", min: 0, max: 20, step: 5, dec: 1 },
-        { k: "avg", n: "Média viagem", u: "km/L", min: 0, max: 20, step: 5, dec: 1 },
-        { k: "fuel", n: "Diesel", u: "%", min: 0, max: 100, step: 25, low: 15 },
-      ] },
-      { name: "Elétrica e ar", g: [
-        { k: "volts", n: "Bateria", u: "V", min: 10, max: 16, step: 1, warn: 15, hot: 15.5, low: 12, dec: 1 },
-        { k: "maf", n: "Fluxo de ar", u: "g/s", min: 0, max: 200, step: 50 },
-        { k: "egr", n: "EGR", u: "%", min: 0, max: 100, step: 25 },
-        { k: "pedal", n: "Acelerador", u: "%", min: 0, max: 100, step: 25 },
-        { k: "baro", n: "Pressão atm.", u: "kPa", min: 60, max: 110, step: 10 },
-        { k: "ambient", n: "Temp. externa", u: "°C", min: -10, max: 50, step: 10, warn: 40, hot: 45 },
-      ] },
-    ],
-    polo: [
-      { name: "Motor", g: [
-        { k: "coolant", n: "Temp. motor", u: "°C", min: 40, max: 120, step: 20, warn: 100, hot: 110 },
-        { k: "map", n: "Coletor", u: "kPa", min: 20, max: 110, step: 15 },
-        { k: "advance", n: "Avanço", u: "°", min: -10, max: 50, step: 10 },
-        { k: "iat", n: "Temp. admissão", u: "°C", min: 0, max: 80, step: 20, warn: 55, hot: 65 },
-        { k: "load", n: "Carga", u: "%", min: 0, max: 100, step: 25 },
-        { k: "rpm", n: "Rotação", u: "rpm", min: 0, max: 7000, step: 1000, warn: 6000, hot: 6250, lab: 1000 },
-      ] },
-      { name: "Marcha e consumo", g: [
-        { k: "cat", n: "Catalisador", u: "°C", min: 100, max: 900, step: 200, warn: 750, hot: 820 },
-        { type: "text", k: "mgear", n: "Marcha", sub: "MANUAL" },
-        { k: "trim", n: "Correção", u: "%", min: -25, max: 25, step: 10, warn: 15, hot: 20, low: -15, dec: 1 },
-        { k: "kml", n: "Consumo", u: "km/L", min: 0, max: 20, step: 5, dec: 1 },
-        { k: "avg", n: "Média viagem", u: "km/L", min: 0, max: 20, step: 5, dec: 1 },
-        { k: "fuel", n: "Tanque", u: "%", min: 0, max: 100, step: 25, low: 15 },
-      ] },
-      { name: "Elétrica e ar", g: [
-        { k: "volts", n: "Bateria", u: "V", min: 10, max: 16, step: 1, warn: 15, hot: 15.5, low: 12, dec: 1 },
-        { k: "throttle", n: "Borboleta", u: "%", min: 0, max: 100, step: 25 },
-        { k: "stft", n: "Correção curta", u: "%", min: -25, max: 25, step: 10, dec: 1 },
-        { k: "ltft", n: "Correção longa", u: "%", min: -25, max: 25, step: 10, dec: 1 },
-        { k: "ethanol", n: "Etanol no combustível", u: "%", min: 0, max: 100, step: 25 },
-        { k: "ambient", n: "Temp. externa", u: "°C", min: -10, max: 50, step: 10, warn: 40, hot: 45 },
-      ] },
-    ],
-  };
+  const VIEWS = Object.fromEntries(VEIC.veiculos.map((v) => [v.id, v.arcos]));
   const NS = "http://www.w3.org/2000/svg", FONT = "Saira Semi Condensed, Arial Narrow, sans-serif";
   const W = 252, H = 182, CX = 126, CY = 101, R = 57, BAND = 28, A0 = 210, SWEEP = 240;
   const ORANGE = "#F29A1E", RED = "#E23A2E", FG = "#F2F3F5";
@@ -1314,30 +1298,36 @@ function applyProfile() {
   $("tracLabel").textContent = PROF.t3.label; $("tracIcon").style.display = PROF.t3.icon ? "" : "none";
   $("tBoostLabel").textContent = PROF.tripBar; $("tBoostUnit").textContent = PROF.bar.unit;
   $("tAtfLabel").textContent = PROF.tripHot2;
-  $("fuelRow").hidden = car !== "polo";
-  document.querySelectorAll("#carSeg button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.car === car)));
+  const flex = PROF.combustivel === "flex", manual = PROF.cambio.tipo === "manual";
+  $("fuelRow").hidden = !(flex || manual);
+  $("fuelLbl").hidden = $("fuelSeg").hidden = !flex;
+  $("gearLbl").hidden = $("gearRow").hidden = !manual;
+  gearScale = parseFloat(store.get("gearScale." + car, car === "polo-1.6-flex" ? store.get("gearScale", "1") : "1")) || 1;
+  PIDS = PROF.pids;
+  $("carSel").value = car;
   document.querySelectorAll("#fuelSeg button").forEach((b) => b.setAttribute("aria-pressed", String(parseFloat(b.dataset.fuel) === fuelMix)));
   for (const k in shown) delete shown[k];
   buildGauge(); buildTherms(); buildBar();
   Arcs.build(); applyLayout();
 }
-document.querySelectorAll("#carSeg button").forEach((b) => b.addEventListener("click", () => {
-  if (b.dataset.car === car) return;
-  car = b.dataset.car; store.set("car", car);
+$("carSel").innerHTML = VEIC.veiculos.map((v) => `<option value="${v.id}">${v.label}</option>`).join("");
+$("carSel").addEventListener("change", (ev) => {
+  if (ev.target.value === car) return;
+  car = ev.target.value; store.set("car", car);
   const wasBle = S.source === "ble";
   stopAll(); S.values = {}; resetTrip(); applyProfile();
   log(`Carro escolhido: ${PROF.name.replace(/<[^>]+>/g, "")}.`);
   if (wasBle) { setConn("bad", "Desconectado"); $("connStatus").textContent = "Carro trocado. Toque em Conectar de novo."; }
   else startSim();
-}));
+});
 $("btnGearCal").addEventListener("click", () => {
   const v = S.values;
   if (!(v.speed > 40 && v.rpm > 1000)) {
     $("connStatus").textContent = "Para calibrar: ande em 5ª marcha, acima de 40 km/h e com velocidade estável, e toque de novo.";
     return;
   }
-  gearScale = v.rpm / v.speed / (POLO_K * POLO_GEARS[4]);
-  store.set("gearScale", String(gearScale));
+  gearScale = v.rpm / v.speed / (gearK() * gears()[gears().length - 1]);
+  store.set("gearScale." + car, String(gearScale));
   $("connStatus").textContent = `Marchas calibradas (fator ${fmt(gearScale, 3)}).`;
   log(`Marchas calibradas em 5ª: ${Math.round(v.rpm)} rpm a ${Math.round(v.speed)} km/h, fator ${fmt(gearScale, 3)}.`);
 });
@@ -1346,8 +1336,16 @@ document.querySelectorAll("#fuelSeg button").forEach((b) => b.addEventListener("
   log(`Combustível no tanque: ${b.textContent}.`);
 }));
 
-fit(); tick(); show(store.get("view", "painel")); applyProfile(); applyWake();
-log("Bordo 4M41 aberto. Só leitura: nenhum comando de escrita sai daqui.");
+$("btnLic").addEventListener("click", () => { $("licToken").value = LIC.token; licUi(); $("licPanel").hidden = false; });
+$("licFechar").addEventListener("click", () => { $("licPanel").hidden = true; });
+$("licAtivar").addEventListener("click", async () => {
+  await carregarLicenca($("licToken").value);
+  if (LIC.dados && !LIC.erro) { store.set("licenca", LIC.token); log(`Licença ativada: ${LIC.dados.cliente} (nº ${LIC.dados.id}).`); }
+});
+$("licRemover").addEventListener("click", () => { store.set("licenca", ""); $("licToken").value = ""; carregarLicenca(""); log("Licença removida."); });
+
+fit(); tick(); show(store.get("view", "painel")); applyProfile(); applyWake(); carregarLicenca(LIC.token);
+log(`Bordo aberto (${VEIC.veiculos.length} perfis, versão ${VEIC.versao}). Só leitura: nenhum comando de escrita sai daqui.`);
 startSim();
 requestAnimationFrame(render);
 </script>

@@ -1,7 +1,7 @@
 {
-  "name": "Bordo 4M41",
+  "name": "Bordo",
   "short_name": "Bordo",
-  "description": "Painel de bordo da Pajero 3.2 DI-D",
+  "description": "Painel de bordo via OBD-II",
   "start_url": "./",
   "scope": "./",
   "display": "fullscreen",
